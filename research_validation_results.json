@@ -1,12 +1,12 @@
 {
-  "timestamp": 1760218324.5546815,
+  "timestamp": 1760218582.1024327,
   "validation_results": [
     {
       "paper_title": "Integrated Information Theory (IIT) - Tononi",
       "research_field": "neuroscience",
       "patterns_detected": 2,
       "consciousness_patterns": 0,
-      "processing_time": 0.07624411582946777,
+      "processing_time": 0.012462615966796875,
       "accuracy_score": 0,
       "theme_coverage": 0.0,
       "themes_found": [],
@@ -17,7 +17,7 @@
       "research_field": "cognitive_psychology",
       "patterns_detected": 1,
       "consciousness_patterns": 0,
-      "processing_time": 0.03898000717163086,
+      "processing_time": 0.00999760627746582,
       "accuracy_score": 0,
       "theme_coverage": 0.0,
       "themes_found": [],
@@ -28,7 +28,7 @@
       "research_field": "neuroscience",
       "patterns_detected": 1,
       "consciousness_patterns": 0,
-      "processing_time": 0.023700714111328125,
+      "processing_time": 0.060880184173583984,
       "accuracy_score": 0,
       "theme_coverage": 0.0,
       "themes_found": [],
@@ -39,6 +39,6 @@
     "total_papers": 3,
     "passed_papers": 0,
     "average_accuracy": 0.0,
-    "average_processing_time": 0.046308279037475586
+    "average_processing_time": 0.02778013547261556
   }
 }
