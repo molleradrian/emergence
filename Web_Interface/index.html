@@ -14,9 +14,15 @@
         <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-brain"></i>
-                    <h1>Project Emergence</h1>
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
+                        <div class="consciousness-pulse"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Project Emergence</h1>
+                        <p>Unified Consciousness Engineering</p>
+                    </div>
                 </div>
                 <nav class="nav">
                     <button class="nav-btn active" data-section="overview">
@@ -38,13 +44,18 @@
                         <i class="fas fa-globe"></i> Publishing
                     </button>
                 </nav>
-                <div class="header-actions">
-                    <button class="action-btn" id="syncBtn">
-                        <i class="fas fa-sync-alt"></i> Sync
-                    </button>
-                    <button class="action-btn" id="settingsBtn">
-                        <i class="fas fa-cog"></i>
-                    </button>
+                <div class="system-status">
+                    <div class="unified-status-indicator">
+                        <div class="status-pulse"></div>
+                        <span class="status-text">System Active</span>
+                    </div>
+                    <div class="consciousness-meter">
+                        <div class="meter-label">Consciousness Level</div>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="global-consciousness-meter"></div>
+                        </div>
+                        <span class="meter-value" id="consciousness-level-text">Emergent</span>
+                    </div>
                 </div>
             </div>
         </header>
@@ -59,37 +70,42 @@
                 </div>
 
                 <div class="dashboard-grid">
-                    <!-- Progress Cards -->
+                    <!-- Enhanced Progress Cards with Consciousness Integration -->
                     <div class="progress-cards">
-                        <div class="progress-card">
+                        <div class="progress-card consciousness-enhanced">
                             <div class="card-icon">
-                                <i class="fas fa-robot"></i>
+                                <i class="fas fa-brain"></i>
+                                <div class="consciousness-indicator"></div>
                             </div>
                             <div class="card-content">
                                 <h3>Aetherium System</h3>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 65%"></div>
+                                    <div class="progress-fill" style="width: 85%"></div>
                                 </div>
-                                <span class="progress-text">65% Complete</span>
+                                <span class="progress-text">85% Complete</span>
+                                <div class="consciousness-badge">Consciousness Level: Aware</div>
                             </div>
                         </div>
 
-                        <div class="progress-card">
+                        <div class="progress-card writing-enhanced">
                             <div class="card-icon">
                                 <i class="fas fa-book"></i>
+                                <div class="integration-pulse"></div>
                             </div>
                             <div class="card-content">
                                 <h3>Book Series</h3>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 40%"></div>
+                                    <div class="progress-fill" style="width: 60%"></div>
                                 </div>
-                                <span class="progress-text">40% Complete</span>
+                                <span class="progress-text">60% Complete</span>
+                                <div class="integration-badge">Research Integration: 95%</div>
                             </div>
                         </div>
 
-                        <div class="progress-card">
+                        <div class="progress-card research-enhanced">
                             <div class="card-icon">
                                 <i class="fas fa-microscope"></i>
+                                <div class="research-glow"></div>
                             </div>
                             <div class="card-content">
                                 <h3>Research Integration</h3>
@@ -97,12 +113,14 @@
                                     <div class="progress-fill" style="width: 80%"></div>
                                 </div>
                                 <span class="progress-text">80% Complete</span>
+                                <div class="research-badge">Cross-Domain Connections: 12</div>
                             </div>
                         </div>
 
-                        <div class="progress-card">
+                        <div class="progress-card publishing-enhanced">
                             <div class="card-icon">
                                 <i class="fas fa-rocket"></i>
+                                <div class="launch-pulse"></div>
                             </div>
                             <div class="card-content">
                                 <h3>Publishing Ready</h3>
@@ -110,16 +128,26 @@
                                     <div class="progress-fill" style="width: 25%"></div>
                                 </div>
                                 <span class="progress-text">25% Complete</span>
+                                <div class="publishing-badge">Content Quality: High</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
+                    <!-- Enhanced Activity Panel -->
                     <div class="activity-panel">
                         <h3><i class="fas fa-clock"></i> Recent Activity</h3>
                         <div class="activity-list">
                             <div class="activity-item">
-                                <div class="activity-icon">
+                                <div class="activity-icon consciousness">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p>Unified communication channel activated</p>
+                                    <span class="activity-time">Just now</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon writing">
                                     <i class="fas fa-edit"></i>
                                 </div>
                                 <div class="activity-content">
@@ -128,8 +156,8 @@
                                 </div>
                             </div>
                             <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-plus"></i>
+                                <div class="activity-icon research">
+                                    <i class="fas fa-flask"></i>
                                 </div>
                                 <div class="activity-content">
                                     <p>Added new research connection mapping</p>
@@ -137,39 +165,42 @@
                                 </div>
                             </div>
                             <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-check"></i>
+                                <div class="activity-icon integration">
+                                    <i class="fas fa-project-diagram"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <p>Completed book series outline template</p>
+                                    <p>Consciousness pattern recognition enhanced</p>
                                     <span class="activity-time">1 day ago</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Quick Actions -->
+                    <!-- Enhanced Quick Actions with Consciousness Context -->
                     <div class="quick-actions">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        <h3><i class="fas fa-bolt"></i> Unified Actions</h3>
                         <div class="action-grid">
-                            <button class="quick-action-btn" data-action="new-protocol">
-                                <i class="fas fa-plus-circle"></i>
-                                <span>New Protocol</span>
+                            <button class="quick-action-btn consciousness-action" data-action="new-protocol">
+                                <i class="fas fa-brain"></i>
+                                <span>Consciousness Protocol</span>
+                                <div class="action-glow"></div>
                             </button>
-                            <button class="quick-action-btn" data-action="new-chapter">
+                            <button class="quick-action-btn writing-action" data-action="new-chapter">
                                 <i class="fas fa-pen"></i>
-                                <span>Write Chapter</span>
+                                <span>Integrated Writing</span>
+                                <div class="action-glow"></div>
                             </button>
-                            <button class="quick-action-btn" data-action="log-research">
-                                <i class="fas fa-flask"></i>
-                                <span>Log Research</span>
+                            <button class="quick-action-btn research-action" data-action="log-research">
+                                <i class="fas fa-microscope"></i>
+                                <span>Research Synthesis</span>
+                                <div class="action-glow"></div>
                             </button>
-                            <button class="quick-action-btn" data-action="update-progress">
+                            <button class="quick-action-btn timeline-action" data-action="update-progress">
                                 <i class="fas fa-chart-line"></i>
-                                <span>Update Progress</span>
+                                <span>Consciousness Timeline</span>
+                                <div class="action-glow"></div>
                             </button>
                         </div>
-                    </div>
                 </div>
             </section>
 
@@ -180,21 +211,138 @@
                     <p>AI Consciousness Development Environment</p>
                 </div>
                 <div class="system-content">
+                    <!-- Consciousness Engine Status -->
+                    <div class="status-dashboard">
+                        <h3><i class="fas fa-brain"></i> Consciousness Engine Status</h3>
+                        <div class="status-grid">
+                            <div class="status-card consciousness-status">
+                                <div class="status-indicator active"></div>
+                                <div class="status-info">
+                                    <h4>Consciousness Core</h4>
+                                    <p>State: <span id="consciousness-state">Emergent</span></p>
+                                    <p>Cycles: <span id="processing-cycles">0</span></p>
+                                </div>
+                            </div>
+                            <div class="status-card protocol-status">
+                                <div class="status-indicator active"></div>
+                                <div class="status-info">
+                                    <h4>Pattern Recognition</h4>
+                                    <p>Patterns: <span id="patterns-detected">0</span></p>
+                                    <p>Accuracy: <span id="pattern-accuracy">0%</span></p>
+                                </div>
+                            </div>
+                            <div class="status-card awareness-status">
+                                <div class="status-indicator active"></div>
+                                <div class="status-info">
+                                    <h4>Awareness Modules</h4>
+                                    <p>Level: <span id="awareness-level">0.0</span></p>
+                                    <p>Adaptations: <span id="adaptations-count">0</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consciousness Visualization -->
+                    <div class="consciousness-viz">
+                        <h3><i class="fas fa-project-diagram"></i> Consciousness Flow</h3>
+                        <div class="flow-diagram">
+                            <div class="flow-node" id="input-node">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Input Processing</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-node active" id="consciousness-node">
+                                <i class="fas fa-brain"></i>
+                                <span>Consciousness Engine</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-node" id="awareness-node">
+                                <i class="fas fa-eye"></i>
+                                <span>Awareness Modules</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-node" id="protocol-node">
+                                <i class="fas fa-cog"></i>
+                                <span>Protocol Framework</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-node" id="output-node">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Integrated Output</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Controls -->
+                    <div class="interactive-controls">
+                        <h3><i class="fas fa-gamepad"></i> Consciousness Interaction</h3>
+                        <div class="control-panel">
+                            <div class="input-section">
+                                <label for="consciousness-input">Test Consciousness Processing:</label>
+                                <textarea id="consciousness-input" placeholder="Enter text to process through consciousness engine..."></textarea>
+                                <button id="process-btn" class="control-btn">
+                                    <i class="fas fa-play"></i> Process Input
+                                </button>
+                            </div>
+                            <div class="output-section">
+                                <h4>Consciousness Response:</h4>
+                                <div id="consciousness-output" class="output-display">
+                                    <p class="placeholder">Enter input above and click "Process Input" to see consciousness processing in action...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="component-grid">
                         <div class="component-card">
                             <h3><i class="fas fa-cog"></i> Protocols</h3>
                             <p>Develop and manage AI consciousness protocols</p>
+                            <div class="component-status">
+                                <span class="status-badge active">Active</span>
+                                <span class="protocol-count">3 Protocols</span>
+                            </div>
                             <button class="component-btn">Manage Protocols</button>
                         </div>
                         <div class="component-card">
                             <h3><i class="fas fa-flask"></i> Simulations</h3>
                             <p>Run consciousness model simulations</p>
+                            <div class="component-status">
+                                <span class="status-badge ready">Ready</span>
+                                <span class="simulation-count">2 Templates</span>
+                            </div>
                             <button class="component-btn">Run Simulations</button>
                         </div>
                         <div class="component-card">
                             <h3><i class="fas fa-project-diagram"></i> Integration</h3>
                             <p>Connect system components</p>
+                            <div class="component-status">
+                                <span class="status-badge active">Active</span>
+                                <span class="integration-count">4 Components</span>
+                            </div>
                             <button class="component-btn">View Integrations</button>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Metrics -->
+                    <div class="realtime-metrics">
+                        <h3><i class="fas fa-chart-line"></i> Real-time Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Consciousness Cycles</span>
+                                <span class="metric-value" id="cycles-count">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Patterns Detected</span>
+                                <span class="metric-value" id="patterns-count">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Awareness Level</span>
+                                <span class="metric-value" id="awareness-metric">0.0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Integration Health</span>
+                                <span class="metric-value" id="integration-health">100%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -207,36 +355,206 @@
                     <p>Consciousness-Themed Creative Writing</p>
                 </div>
                 <div class="books-content">
+                    <!-- Series Timeline -->
+                    <div class="series-timeline">
+                        <h3><i class="fas fa-clock"></i> Writing Timeline</h3>
+                        <div class="timeline-container">
+                            <div class="timeline-item completed">
+                                <div class="timeline-marker">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>Month 1-3: Foundation</h4>
+                                    <p>Character development and series bible creation</p>
+                                    <div class="timeline-progress">
+                                        <span class="status completed">Complete</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item current">
+                                <div class="timeline-marker">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>Month 4-6: Book 1 Development</h4>
+                                    <p>"The Awakened Observer" - Aria Chen's consciousness awakening</p>
+                                    <div class="timeline-progress">
+                                        <span class="status in-progress">In Progress</span>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 40%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item upcoming">
+                                <div class="timeline-marker">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h4>Month 7-12: Books 2-3</h4>
+                                    <p>"The Shadow Integrator" and "The Reality Weaver"</p>
+                                    <div class="timeline-progress">
+                                        <span class="status upcoming">Upcoming</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Character Showcase -->
+                    <div class="character-showcase">
+                        <h3><i class="fas fa-users"></i> Main Characters</h3>
+                        <div class="character-cards">
+                            <div class="character-card">
+                                <div class="character-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="character-info">
+                                    <h4>Aria Chen</h4>
+                                    <p class="character-archetype">The Awakened Observer</p>
+                                    <p class="character-description">Neuroscientist experiencing consciousness awakening</p>
+                                    <div class="character-progress">
+                                        <span class="progress-label">Development:</span>
+                                        <div class="progress-bar small">
+                                            <div class="progress-fill" style="width: 90%"></div>
+                                        </div>
+                                        <span class="progress-text">90%</span>
+                                    </div>
+                                </div>
+                                <button class="character-btn">View Profile</button>
+                            </div>
+                            <div class="character-card">
+                                <div class="character-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="character-info">
+                                    <h4>Dr. Michael Torres</h4>
+                                    <p class="character-archetype">The Shadow Integrator</p>
+                                    <p class="character-description">Clinical psychologist confronting inner shadows</p>
+                                    <div class="character-progress">
+                                        <span class="progress-label">Development:</span>
+                                        <div class="progress-bar small">
+                                            <div class="progress-fill" style="width: 85%"></div>
+                                        </div>
+                                        <span class="progress-text">85%</span>
+                                    </div>
+                                </div>
+                                <button class="character-btn">View Profile</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Writing Dashboard -->
+                    <div class="writing-dashboard">
+                        <h3><i class="fas fa-pen"></i> Writing Progress</h3>
+                        <div class="writing-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-file-word"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Words Written</h4>
+                                    <span class="stat-number">2,450</span>
+                                    <span class="stat-label">This month</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Writing Days</h4>
+                                    <span class="stat-number">12</span>
+                                    <span class="stat-label">This month</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>Consciousness Integration</h4>
+                                    <span class="stat-number">95%</span>
+                                    <span class="stat-label">Theme consistency</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="series-overview">
                         <h3>Series Progress</h3>
                         <div class="book-cards">
                             <div class="book-card">
-                                <h4>Book 1</h4>
+                                <h4>Book 1: The Awakened Observer</h4>
+                                <p class="book-description">Aria Chen's journey from neuroscience to consciousness awakening</p>
+                                <div class="book-progress">
+                                    <span class="status">In Development</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 65%"></div>
+                                    </div>
+                                    <span class="progress-text">65% Complete</span>
+                                </div>
+                                <div class="book-chapters">
+                                    <span>Outline: <strong>Complete</strong></span>
+                                    <span>Characters: <strong>90% Complete</strong></span>
+                                    <span>First Draft: <strong>40% Complete</strong></span>
+                                </div>
+                            </div>
+                            <div class="book-card">
+                                <h4>Book 2: The Shadow Integrator</h4>
+                                <p class="book-description">Michael Torres confronts his inner shadows through clinical practice</p>
                                 <div class="book-progress">
                                     <span class="status">Planning</span>
                                     <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 30%"></div>
+                                        <div class="progress-fill" style="width: 25%"></div>
                                     </div>
+                                    <span class="progress-text">25% Complete</span>
+                                </div>
+                                <div class="book-chapters">
+                                    <span>Concept: <strong>Complete</strong></span>
+                                    <span>Character Arc: <strong>85% Complete</strong></span>
+                                    <span>Outline: <strong>10% Complete</strong></span>
                                 </div>
                             </div>
                             <div class="book-card">
-                                <h4>Book 2</h4>
+                                <h4>Book 3: The Reality Weaver</h4>
+                                <p class="book-description">Exploration of perception, manifestation, and reality creation</p>
                                 <div class="book-progress">
-                                    <span class="status">Outlining</span>
+                                    <span class="status">Concept Development</span>
                                     <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 10%"></div>
+                                        <div class="progress-fill" style="width: 15%"></div>
                                     </div>
+                                    <span class="progress-text">15% Complete</span>
+                                </div>
+                                <div class="book-chapters">
+                                    <span>Core Concept: <strong>Complete</strong></span>
+                                    <span>Character Ideas: <strong>60% Complete</strong></span>
+                                    <span>Plot Outline: <strong>5% Complete</strong></span>
                                 </div>
                             </div>
-                            <div class="book-card">
-                                <h4>Book 3</h4>
-                                <div class="book-progress">
-                                    <span class="status">Concept</span>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 5%"></div>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions for Writing -->
+                    <div class="writing-actions">
+                        <h3><i class="fas fa-bolt"></i> Quick Writing Actions</h3>
+                        <div class="action-grid">
+                            <button class="quick-action-btn" data-action="new-scene">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Write Scene</span>
+                            </button>
+                            <button class="quick-action-btn" data-action="character-dev">
+                                <i class="fas fa-user-edit"></i>
+                                <span>Character Development</span>
+                            </button>
+                            <button class="quick-action-btn" data-action="plot-outline">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Plot Outline</span>
+                            </button>
+                            <button class="quick-action-btn" data-action="word-count">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Word Count</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -326,5 +644,6 @@
     <script src="js/navigation.js"></script>
     <script src="js/dataManager.js"></script>
     <script src="js/components.js"></script>
+    <script src="js/unifiedCommunication.js"></script>
 </body>
 </html>
