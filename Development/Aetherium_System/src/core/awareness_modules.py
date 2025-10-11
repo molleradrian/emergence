@@ -175,6 +175,7 @@ class AdaptationEngine:
 
     def __init__(self):
         self.adaptation_rules = []
+        self.adaptation_suggestions = []
         self.evolution_history = []
         self.performance_baselines = {}
 

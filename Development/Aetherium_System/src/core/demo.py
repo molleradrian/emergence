@@ -12,18 +12,39 @@ import json
 import time
 
 # Add the src directory to path for imports
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from core import (
-    process_with_consciousness,
-    get_consciousness_status,
-    reflect_on_consciousness,
-    monitor_consciousness,
-    analyze_thinking,
-    get_awareness_status,
-    process_integration_request,
-    get_integration_status
-)
+try:
+    from .consciousness_engine import (
+        process_with_consciousness,
+        get_consciousness_status,
+        reflect_on_consciousness
+    )
+    from .awareness_modules import (
+        monitor_consciousness,
+        analyze_thinking,
+        get_awareness_status
+    )
+    from .integration_layer import (
+        process_integration_request,
+        get_integration_status
+    )
+except ImportError:
+    # Fallback for direct execution
+    from consciousness_engine import (
+        process_with_consciousness,
+        get_consciousness_status,
+        reflect_on_consciousness
+    )
+    from awareness_modules import (
+        monitor_consciousness,
+        analyze_thinking,
+        get_awareness_status
+    )
+    from integration_layer import (
+        process_integration_request,
+        get_integration_status
+    )
 
 def demonstrate_consciousness_engine():
     """Demonstrate the consciousness engine functionality"""
@@ -87,10 +108,10 @@ def demonstrate_awareness_modules():
     for thought in thought_processes:
         print(f"\n--- Analyzing: {thought['type']} thought ---")
         analysis = analyze_thinking(thought)
-        print(f"Depth: {analysis['depth']".2f"}")
-        print(f"Clarity: {analysis['clarity']".2f"}")
-        print(f"Coherence: {analysis['coherence']".2f"}")
-        print(f"Novelty: {analysis['novelty']".2f"}")
+        print(f"Depth: {analysis['depth']:.2f}")
+        print(f"Clarity: {analysis['clarity']:.2f}")
+        print(f"Coherence: {analysis['coherence']:.2f}")
+        print(f"Novelty: {analysis['novelty']:.2f}")
 
     # Show awareness status
     print("\n--- Awareness Status ---")
@@ -116,7 +137,7 @@ def demonstrate_integration_layer():
 
     response = process_integration_request(integration_request)
 
-    print(f"\nProcessing Time: {response['processing_time']".3f"}s")
+    print(f"Processing Time: {response['processing_time']:.3f}s")
     print(f"Integration Path: {response['integration_path']}")
     print(f"Response: {response['integrated_response']}")
 

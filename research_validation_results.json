@@ -1,0 +1,44 @@
+{
+  "timestamp": 1760155066.775668,
+  "validation_results": [
+    {
+      "paper_title": "Integrated Information Theory (IIT) - Tononi",
+      "research_field": "neuroscience",
+      "patterns_detected": 2,
+      "consciousness_patterns": 0,
+      "processing_time": 0.014063835144042969,
+      "accuracy_score": 0,
+      "theme_coverage": 0.0,
+      "themes_found": [],
+      "validation_passed": false
+    },
+    {
+      "paper_title": "Global Workspace Theory (GWT) - Baars",
+      "research_field": "cognitive_psychology",
+      "patterns_detected": 1,
+      "consciousness_patterns": 0,
+      "processing_time": 0.0013439655303955078,
+      "accuracy_score": 0,
+      "theme_coverage": 0.0,
+      "themes_found": [],
+      "validation_passed": false
+    },
+    {
+      "paper_title": "Neural Correlates of Consciousness - Crick & Koch",
+      "research_field": "neuroscience",
+      "patterns_detected": 1,
+      "consciousness_patterns": 0,
+      "processing_time": 0.0017254352569580078,
+      "accuracy_score": 0,
+      "theme_coverage": 0.0,
+      "themes_found": [],
+      "validation_passed": false
+    }
+  ],
+  "summary": {
+    "total_papers": 3,
+    "passed_papers": 0,
+    "average_accuracy": 0.0,
+    "average_processing_time": 0.005711078643798828
+  }
+}
