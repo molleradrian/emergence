@@ -79,19 +79,14 @@ class UnifiedCommunicationInterface {
         // In real implementation, this would connect to the Python CrossComponentCommunicator
         console.log('🌉 Connecting to Cross-Component Bridge...');
 
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                this.crossComponentBridge = {
-                    processConsciousnessToWriting: async (input) => {
-                        return await this.simulateConsciousnessToWriting(input);
-                    },
-                    processWritingToResearch: async (content) => {
-                        return await this.simulateWritingToResearch(content);
-                    }
-                };
-                resolve();
-            }, 1200);
-        });
+        this.crossComponentBridge = {
+            processConsciousnessToWriting: this.processConsciousnessToWriting.bind(this),
+            processWritingToResearch: async (content) => {
+                return await this.simulateWritingToResearch(content);
+            }
+        };
+
+        return Promise.resolve();
     }
 
     async registerWebInterface() {
@@ -513,22 +508,25 @@ class UnifiedCommunicationInterface {
         return { success: true, component_id: componentId, updated_state: state };
     }
 
-    async simulateConsciousnessToWriting(input) {
+    async processConsciousnessToWriting(input) {
+        const response = await fetch('http://localhost:8000/api/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: input.content }),
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // The backend response needs to be mapped to the format the frontend expects.
+        // This is a placeholder mapping.
         return {
-            bridge_type: 'consciousness_to_writing',
-            insights: ['self_reflective_narrative', 'identity_exploration'],
-            writing_suggestions: [
-                {
-                    type: 'character_development',
-                    suggestion: 'Enhanced consciousness integration for character arc'
-                }
-            ],
-            character_updates: [
-                {
-                    character: 'aria_chen',
-                    update_type: 'consciousness_integration'
-                }
-            ]
+            insights: data.patterns || [],
+            writing_suggestions: data.output ? [{ type: 'suggestion', suggestion: data.output }] : [],
+            character_updates: [],
         };
     }
 

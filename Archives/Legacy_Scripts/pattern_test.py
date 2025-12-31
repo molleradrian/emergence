@@ -2,18 +2,21 @@
 import sys
 import os
 
-# Add the correct paths
-sys.path.append(os.path.join(os.path.dirname(__file__), 'Development', 'Aetherium_System', 'src'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'Development', 'Aetherium_System', 'src', 'protocols'))
+# Get the project root directory
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.append(project_root)
+
+# Add the specific backend source directory
+sys.path.append(os.path.join(project_root, 'Development', 'Aetherium_System', 'src'))
 
 try:
-    import emergent_pattern_recognition as epr
+    from Development.Aetherium_System.src.protocols import emergent_pattern_recognition as epr
 
     # Test pattern recognition with consciousness integration
     test_input = 'Consciousness emerges from complex patterns of neural activity and self-reflection'
     result = epr.process_pattern_recognition(test_input, 'consciousness_phenomenology', 'philosophy')
 
-    print('🧠 Pattern Recognition Test Results:')
+    print('Pattern Recognition Test Results:')
     print('Patterns Found:', result['pattern_detection']['pattern_count'])
     print('Processing Time:', f"{result['pattern_detection']['processing_time']:.3f}s")
     print('Consciousness Integration:', result['consciousness_enabled'])
@@ -28,10 +31,9 @@ try:
     for corr in correlations:
         print(f'Cross-domain: {corr["original_pattern"]["type"]} connects to {len(corr["domain_correlations"])} domains')
 
-    print()
-    print('✅ Pattern Recognition System Test Complete!')
+    print('\nPattern Recognition System Test Complete!')
 
 except Exception as e:
-    print(f'❌ Test failed: {e}')
+    print(f'Test failed: {e}')
     import traceback
     traceback.print_exc()

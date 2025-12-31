@@ -42,8 +42,47 @@ class ConsciousnessPatternAnalyzer {
     }
 
     async performPatternAnalysis(text) {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+            // Try to call real backend API
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    console.log('Backend Analysis:', data);
+                    // Convert backend response to frontend format
+                    // Backend returns simple list of patterns strings, map them to objects
+                    const apiPatterns = (data.patterns || []).map(p => ({
+                        type: 'neural_pattern',
+                        description: `Deep analysis detected: ${p}`,
+                        confidence: 0.95,
+                        keywords: [p],
+                        data: { source: 'backend_core', state: data.state }
+                    }));
+
+                    // Also include local analysis for UI richness if backend returns few results
+                    const localPatterns = this.performLocalAnalysis(text);
+                    return [...apiPatterns, ...localPatterns];
+                }
+            }
+        } catch (error) {
+            console.log('API unavailable, using local simulation:', error);
+        }
+
+        // Fallback to local analysis
+        return this.performLocalDetailedAnalysis(text);
+    }
+
+    // Renamed original logic
+    performLocalDetailedAnalysis(text) {
+        // Simulate API call delay for realism if we fell back
+        // await new Promise(resolve => setTimeout(resolve, 800));
 
         const patterns = [];
         const lowerText = text.toLowerCase();
@@ -59,7 +98,7 @@ class ConsciousnessPatternAnalyzer {
         if (foundKeywords.length > 0) {
             patterns.push({
                 type: 'consciousness_content',
-                description: 'Consciousness-related content detected',
+                description: 'Consciousness-related content detected (Local)',
                 confidence: Math.min(foundKeywords.length * 0.2, 1.0),
                 keywords: foundKeywords
             });
@@ -99,6 +138,11 @@ class ConsciousnessPatternAnalyzer {
         return patterns.sort((a, b) => b.confidence - a.confidence);
     }
 
+    performLocalAnalysis(text) {
+        // Simple helper for mixing results
+        return this.performLocalDetailedAnalysis(text);
+    }
+
     showAnalyzingState() {
         const outputDiv = document.getElementById('pattern-output');
         outputDiv.innerHTML = `
@@ -109,20 +153,20 @@ class ConsciousnessPatternAnalyzer {
         `;
     }
 
-    displayPatternResults(patterns) {
-        const outputDiv = document.getElementById('pattern-output');
+        displayPatternResults(patterns) {
+            const outputDiv = document.getElementById('pattern-output');
 
-        if (patterns.length === 0) {
-            outputDiv.innerHTML = `
+            if (patterns.length === 0) {
+                outputDiv.innerHTML = `
                 <div class="no-patterns">
                     <i class="fas fa-search"></i>
                     <p>No significant consciousness patterns detected.</p>
                 </div>
             `;
-            return;
-        }
+                return;
+            }
 
-        const resultsHtml = patterns.map((pattern, index) => `
+            const resultsHtml = patterns.map((pattern, index) => `
             <div class="pattern-result">
                 <div class="pattern-header">
                     <span class="pattern-number">${index + 1}</span>
@@ -139,65 +183,65 @@ class ConsciousnessPatternAnalyzer {
             </div>
         `).join('');
 
-        outputDiv.innerHTML = resultsHtml;
-    }
-
-    updateVisualization(patterns) {
-        if (!this.canvas) {
-            this.canvas = document.getElementById('pattern-canvas');
+            outputDiv.innerHTML = resultsHtml;
         }
 
-        const ctx = this.canvas.getContext('2d');
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        updateVisualization(patterns) {
+            if (!this.canvas) {
+                this.canvas = document.getElementById('pattern-canvas');
+            }
 
-        // Create network visualization
-        this.createNetworkVisualization(ctx, patterns);
-    }
+            const ctx = this.canvas.getContext('2d');
+            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    createNetworkVisualization(ctx, patterns) {
-        const centerX = this.canvas.width / 2;
-        const centerY = this.canvas.height / 2;
-        const radius = 150;
+            // Create network visualization
+            this.createNetworkVisualization(ctx, patterns);
+        }
 
-        // Draw central consciousness node
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 20, 0, 2 * Math.PI);
-        ctx.fillStyle = '#4f46e5';
-        ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        createNetworkVisualization(ctx, patterns) {
+            const centerX = this.canvas.width / 2;
+            const centerY = this.canvas.height / 2;
+            const radius = 150;
 
-        // Draw pattern nodes
-        patterns.forEach((pattern, index) => {
-            const angle = (index / patterns.length) * 2 * Math.PI;
-            const x = centerX + Math.cos(angle) * radius;
-            const y = centerY + Math.sin(angle) * radius;
-
-            // Node
+            // Draw central consciousness node
             ctx.beginPath();
-            ctx.arc(x, y, 15, 0, 2 * Math.PI);
-            ctx.fillStyle = `hsl(${pattern.confidence * 120}, 70%, 60%)`;
+            ctx.arc(centerX, centerY, 20, 0, 2 * Math.PI);
+            ctx.fillStyle = '#4f46e5';
             ctx.fill();
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            // Connection to center
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(x, y);
-            ctx.strokeStyle = `rgba(79, 70, 229, ${pattern.confidence})`;
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Label
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '10px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(pattern.type, x, y + 30);
-        });
-    }
+            // Draw pattern nodes
+            patterns.forEach((pattern, index) => {
+                const angle = (index / patterns.length) * 2 * Math.PI;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+
+                // Node
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, 2 * Math.PI);
+                ctx.fillStyle = `hsl(${pattern.confidence * 120}, 70%, 60%)`;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Connection to center
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = `rgba(79, 70, 229, ${pattern.confidence})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(pattern.type, x, y + 30);
+            });
+        }
 }
 
 // Writing Assistant System
@@ -394,7 +438,7 @@ const patternAnalyzer = new ConsciousnessPatternAnalyzer();
 const writingAssistant = new ConsciousnessWritingAssistant();
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Pattern analyzer functionality
     const analyzeBtn = document.getElementById('analyze-btn');
     const patternInput = document.getElementById('pattern-input');
@@ -457,7 +501,7 @@ function updateVisualization(viewType) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    switch(viewType) {
+    switch (viewType) {
         case 'network':
             patternAnalyzer.createNetworkVisualization(ctx, []);
             break;

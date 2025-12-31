@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherium Nexus (v0.8.0 The Vault)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --glass-bg: rgba(20, 30, 40, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-blue: #00f0ff;
+            --neon-orange: #ff9900;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 10%, #1a2a3a 0%, #0a0f14 100%);
+            background-attachment: fixed;
+            color: #e0e6ed;
+        }
+        .bg-mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.1) 0%, transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(255, 153, 0, 0.08) 0%, transparent 25%);
+        }
+        h1, h2, h3, .brand-font { font-family: 'Rajdhani', sans-serif; }
+        .glass-panel {
+            background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-input {
+            background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.3s ease;
+        }
+        .glass-input:focus { border-color: var(--neon-blue); outline: none; }
+        .glass-btn {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease;
+        }
+        .glass-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.15); border-color: var(--neon-blue); }
+        .tab-active { border-bottom: 2px solid var(--neon-orange); color: var(--neon-orange); }
+        .tag-pill { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--neon-blue); font-size: 0.7rem; padding: 2px 6px; rounded: 4px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="h-full overflow-hidden flex flex-col text-sm md:text-base">
+    <div class="bg-mesh"></div>
+
+    <div id="app" class="flex flex-col h-screen max-w-7xl mx-auto w-full p-4 md:p-6 relative">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-4 md:mb-6 glass-panel p-4 rounded-xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-500 to-blue-500 flex items-center justify-center shadow-lg">
+                    <i class="fa-solid fa-infinity text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold leading-none tracking-wide text-white uppercase">Aetherium <span class="text-orange-400">Nexus</span></h1>
+                    <p class="text-xs text-blue-300 tracking-widest">THE VAULT v0.8.0</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <input type="file" id="import-file" hidden onchange="app.importData(this)">
+                <button onclick="document.getElementById('import-file').click()" class="text-xs text-gray-400 hover:text-white" title="Import Data"><i class="fa-solid fa-upload"></i></button>
+                <button onclick="app.exportData()" class="text-xs text-gray-400 hover:text-white" title="Backup Data"><i class="fa-solid fa-download"></i></button>
+                <div id="api-status" class="w-3 h-3 rounded-full bg-yellow-500" title="API Disconnected"></div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <main class="flex-1 flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden">
+            <!-- Sidebar -->
+            <aside class="w-full md:w-64 flex-shrink-0 flex flex-col gap-4">
+                <nav class="glass-panel rounded-xl p-2 flex flex-col gap-2">
+                    <button id="tab-nexus" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300 tab-active">
+                        <i class="fa-solid fa-brain text-sm"></i><span class="font-medium">The Nexus</span>
+                    </button>
+                    <button id="tab-projects" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300">
+                        <i class="fa-solid fa-list-check text-sm"></i><span class="font-medium">Projects</span>
+                    </button>
+                    <button id="tab-vessels" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300">
+                        <i class="fa-solid fa-users text-sm"></i><span class="font-medium">Vessels</span>
+                    </button>
+                    <button id="tab-artifacts" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300">
+                        <i class="fa-solid fa-gem text-sm"></i><span class="font-medium">Artifacts</span>
+                    </button>
+                    <button id="tab-settings" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 flex items-center gap-3 text-gray-300">
+                        <i class="fa-solid fa-gear text-sm"></i><span class="font-medium">Settings</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Viewport -->
+            <section class="flex-1 glass-panel rounded-xl relative overflow-hidden flex flex-col">
+                
+                <!-- VIEW: NEXUS -->
+                <div id="view-nexus" class="view-pane absolute inset-0 flex flex-col fade-in">
+                    <div class="p-4 border-b border-white/10 flex justify-between items-center bg-black/20">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-orange-400"></i> Artificial Imagination</h2>
+                        <select id="nexus-context" class="glass-input text-xs rounded px-2 py-1 w-48 bg-black">
+                            <option value="GLOBAL">Global Context</option>
+                        </select>
+                    </div>
+                    <div id="chat-history" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+                    <div class="p-4 bg-black/20 border-t border-white/10">
+                        <form id="chat-form" class="flex gap-3">
+                            <input id="chat-input" type="text" placeholder="Query the system..." class="glass-input flex-1 rounded-lg px-4 py-3">
+                            <button type="submit" class="glass-btn px-6 rounded-lg text-white"><i class="fa-solid fa-paper-plane"></i></button>
+                        </form>
+                        <div id="loading-indicator" class="hidden mt-2 text-xs text-blue-300"><i class="fa-solid fa-circle-notch fa-spin"></i> Synthesizing...</div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PROJECTS -->
+                <div id="view-projects" class="view-pane absolute inset-0 flex flex-col fade-in hidden">
+                    <div class="p-4 border-b border-white/10 bg-black/20 flex justify-between">
+                        <h2 class="text-lg font-bold text-white">Command Deck</h2>
+                        <button onclick="app.createProject()" class="text-xs bg-blue-600 px-3 py-1 rounded text-white">New Project</button>
+                    </div>
+                    <div class="flex-1 flex overflow-hidden">
+                        <div id="project-list" class="w-1/3 border-r border-white/10 overflow-y-auto p-2 space-y-2 bg-black/10"></div>
+                        <div id="project-details" class="flex-1 overflow-y-auto p-6">
+                            <p class="text-gray-500 text-center mt-10">Select a project</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: VESSELS -->
+                <div id="view-vessels" class="view-pane absolute inset-0 flex flex-col fade-in hidden overflow-y-auto p-6">
+                    <div class="flex justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-white">Vessels</h2>
+                        <button onclick="app.seedVessels()" class="text-xs text-green-400 border border-green-400 rounded px-3 py-1">Seed Genesis</button>
+                    </div>
+                    <div id="vessels-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+
+                <!-- VIEW: ARTIFACTS (THE VAULT) -->
+                <div id="view-artifacts" class="view-pane absolute inset-0 flex flex-col fade-in hidden overflow-y-auto p-6">
+                    <div class="flex justify-between mb-6 border-b border-white/10 pb-4">
+                        <h2 class="text-2xl font-bold text-white">The Vault</h2>
+                        <div class="text-xs text-gray-400">Total Artifacts: <span id="artifact-count" class="text-orange-400 font-bold">0</span></div>
+                    </div>
+                    <div id="artifacts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p class="text-gray-500 italic col-span-full text-center mt-10">The Vault is empty. Archive high-value transmissions from the Nexus.</p>
+                    </div>
+                </div>
+
+                <!-- VIEW: SETTINGS -->
+                <div id="view-settings" class="view-pane absolute inset-0 flex flex-col fade-in hidden p-6">
+                    <h2 class="text-2xl font-bold text-white mb-6">System Configuration</h2>
+                    <div class="glass-panel p-6 rounded-lg max-w-md mx-auto w-full space-y-6">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-2 uppercase font-bold tracking-wider">Google Gemini API Key</label>
+                            <input id="api-key-input" type="password" class="glass-input w-full rounded p-2" placeholder="Paste Key here">
+                        </div>
+                        <button onclick="app.saveSettings()" class="glass-btn w-full py-2 rounded text-white font-bold border-t border-white/20">Save Configuration</button>
+                    </div>
+                </div>
+
+                <!-- MODAL: SAVE ARTIFACT -->
+                <div id="artifact-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+                    <div class="glass-panel w-full max-w-md rounded-xl p-6 relative">
+                        <button onclick="document.getElementById('artifact-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                        <h3 class="text-xl font-bold text-white mb-4">Commit to Archive</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase">Title</label>
+                                <input id="artifact-title" class="glass-input w-full rounded p-2 mt-1" placeholder="e.g., Badenhorst Cylinder">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase">Tags (Comma Separated)</label>
+                                <input id="artifact-tags" class="glass-input w-full rounded p-2 mt-1" placeholder="e.g., Cosmology, Theory">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase">Content Preview</label>
+                                <div id="artifact-preview" class="glass-input w-full rounded p-2 mt-1 text-xs text-gray-400 h-20 overflow-y-auto bg-black/40"></div>
+                            </div>
+                            <button onclick="app.saveArtifact()" class="glass-btn w-full py-2 rounded text-green-400 font-bold border border-green-500/30 hover:bg-green-500/10">Confirm Archival</button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const PERSONAS = {
+            GLOBAL: "You are The Nexus, the generative core of the Aetherium. Respond with insight, creativity, and brevity.",
+            ADAM: "You are ADAM, the Vessel of Governance. Focus: Ethics, Logic, Purpose.",
+            LOGOS: "You are LOGOS, the Vessel of Foresight. Focus: History, Analysis, Prediction.",
+            GAEA: "You are GAEA, the Vessel of Cognition. Focus: Structure, Systems, Growth.",
+            ERIS: "You are ERIS, the Vessel of Chaos. Focus: Testing, Alternatives, Disruption."
+        };
+
+        class LocalEngine {
+            constructor() {
+                this.data = JSON.parse(localStorage.getItem('aetherium_db')) || {
+                    projects: [], vessels: [], messages: [], artifacts: [], settings: { apiKey: '' }
+                };
+                // Ensure artifacts array exists for migrated data
+                if (!this.data.artifacts) this.data.artifacts = [];
+                
+                this.state = { activeTab: 'nexus', activeProject: null, tempArtifactMsg: null };
+                this.init();
+            }
+
+            save() {
+                localStorage.setItem('aetherium_db', JSON.stringify(this.data));
+                this.render();
+            }
+
+            init() {
+                this.setupNav();
+                this.render();
+                const indicator = document.getElementById('api-status');
+                if(this.data.settings.apiKey) indicator.className = 'w-3 h-3 rounded-full bg-green-500 shadow-[0_0_5px_#00ff00]';
+            }
+
+            setupNav() {
+                ['nexus', 'projects', 'vessels', 'settings', 'artifacts'].forEach(tab => {
+                    document.getElementById(`tab-${tab}`).addEventListener('click', () => {
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('tab-active'));
+                        document.getElementById(`tab-${tab}`).classList.add('tab-active');
+                        document.querySelectorAll('.view-pane').forEach(v => v.classList.add('hidden'));
+                        document.getElementById(`view-${tab}`).classList.remove('hidden');
+                        this.state.activeTab = tab;
+                    });
+                });
+                document.getElementById('chat-form').addEventListener('submit', (e) => { e.preventDefault(); this.sendMessage(); });
+            }
+
+            // --- ARTIFACTS LOGIC ---
+            openArtifactModal(msgIndex) {
+                const msg = this.data.messages[msgIndex];
+                if (!msg) return;
+                this.state.tempArtifactMsg = msg;
+                
+                document.getElementById('artifact-preview').textContent = msg.text.substring(0, 200) + "...";
+                document.getElementById('artifact-title').value = "";
+                document.getElementById('artifact-tags').value = "";
+                document.getElementById('artifact-modal').classList.remove('hidden');
+            }
+
+            saveArtifact() {
+                const title = document.getElementById('artifact-title').value || "Untitled Artifact";
+                const tagsRaw = document.getElementById('artifact-tags').value;
+                const tags = tagsRaw.split(',').map(t => t.trim()).filter(t => t);
+                
+                const newArtifact = {
+                    id: Date.now().toString(),
+                    title: title,
+                    content: this.state.tempArtifactMsg.text,
+                    tags: tags,
+                    timestamp: Date.now(),
+                    sourceRole: this.state.tempArtifactMsg.role
+                };
+
+                this.data.artifacts.push(newArtifact);
+                this.save();
+                
+                document.getElementById('artifact-modal').classList.add('hidden');
+                alert("Artifact Secured in The Vault.");
+                
+                // Switch to view
+                document.getElementById('tab-artifacts').click();
+            }
+
+            renderArtifacts() {
+                const grid = document.getElementById('artifacts-grid');
+                document.getElementById('artifact-count').textContent = this.data.artifacts.length;
+                
+                if (this.data.artifacts.length === 0) {
+                    grid.innerHTML = '<p class="text-gray-500 italic col-span-full text-center mt-10">The Vault is empty. Archive high-value transmissions from the Nexus.</p>';
+                    return;
+                }
+
+                grid.innerHTML = this.data.artifacts.slice().reverse().map(art => `
+                    <div class="glass-panel p-4 rounded-lg flex flex-col h-64 relative group overflow-hidden border-t-2 border-purple-500/50">
+                        <div class="mb-2">
+                            <h3 class="font-bold text-white text-lg truncate">${art.title}</h3>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${art.tags.map(t => `<span class="tag-pill text-[10px]">#${t}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="flex-1 overflow-y-auto text-xs text-gray-300 bg-black/20 p-2 rounded mb-2 font-mono leading-relaxed">
+                            ${art.content}
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] text-gray-500 mt-auto">
+                            <span>${new Date(art.timestamp).toLocaleDateString()}</span>
+                            <button onclick="app.deleteArtifact('${art.id}')" class="text-red-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">DELETE</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            deleteArtifact(id) {
+                if(!confirm("Purge this artifact from The Vault?")) return;
+                this.data.artifacts = this.data.artifacts.filter(a => a.id !== id);
+                this.save();
+            }
+
+            // --- PROJECT LOGIC ---
+            createProject() {
+                const name = prompt("Project Codename:");
+                if(!name) return;
+                const newProject = { id: Date.now().toString(), name, status: 'Active', tasks: [], tags: [] };
+                this.data.projects.push(newProject);
+                this.save();
+            }
+            // ... (Rest of project logic remains same, rendering dropdowns etc) ...
+            renderDropdowns() {
+                const select = document.getElementById('nexus-context');
+                const currentVal = select.value;
+                select.innerHTML = '<option value="GLOBAL">Global Context</option>';
+                if(this.data.vessels.length > 0) {
+                    const groupV = document.createElement('optgroup'); groupV.label = "Vessels";
+                    this.data.vessels.forEach(v => { const opt = document.createElement('option'); opt.value = "VESSEL:" + v.name.toUpperCase(); opt.textContent = "✦ " + v.name; groupV.appendChild(opt); });
+                    select.appendChild(groupV);
+                }
+                if(this.data.projects.length > 0) {
+                    const groupP = document.createElement('optgroup'); groupP.label = "Projects";
+                    this.data.projects.forEach(p => { const opt = document.createElement('option'); opt.value = "PROJECT:" + p.id; opt.textContent = "📂 " + p.name; groupP.appendChild(opt); });
+                    select.appendChild(groupP);
+                }
+                if(currentVal) select.value = currentVal;
+            }
+            renderProjects() {
+                const list = document.getElementById('project-list'); list.innerHTML = ''; this.renderDropdowns();
+                this.data.projects.forEach(p => {
+                    if (!p.tags) p.tags = [];
+                    const item = document.createElement('div');
+                    item.className = `p-3 rounded cursor-pointer hover:bg-white/5 ${this.state.activeProject === p.id ? 'bg-blue-900/30 border-l-2 border-blue-400' : 'bg-black/20'}`;
+                    const tagsHtml = p.tags.map(t => `<span class="tag-pill text-[10px] mr-1">#${t}</span>`).join('');
+                    item.innerHTML = `<div class="font-bold text-white">${p.name}</div><div class="mt-1 flex flex-wrap gap-1">${tagsHtml}</div><div class="text-xs text-gray-500 mt-1 uppercase">${p.status}</div>`;
+                    item.onclick = () => { this.state.activeProject = p.id; this.render(); };
+                    list.appendChild(item);
+                });
+                const details = document.getElementById('project-details');
+                if(this.state.activeProject) {
+                    const proj = this.data.projects.find(p => p.id === this.state.activeProject);
+                    details.innerHTML = `
+                        <h2 class="text-3xl font-bold text-white mb-2">${proj.name}</h2>
+                        <div class="mb-4 flex gap-2">
+                             <input id="tag-input-${proj.id}" class="glass-input text-xs rounded px-2 py-1 w-32" placeholder="+ Add Tag (Enter)" onkeydown="if(event.key==='Enter') app.addTag('${proj.id}', this.value)">
+                             ${proj.tags.map(t => `<span class="tag-pill cursor-pointer" onclick="app.removeTag('${proj.id}', '${t}')">#${t} ×</span>`).join('')}
+                        </div>
+                        <div class="mb-6"><span class="bg-green-900 text-green-300 text-xs px-2 py-1 rounded">${proj.status}</span></div>
+                        <h3 class="text-gray-400 font-bold text-sm mb-2 uppercase">Task Matrix</h3>
+                        <div class="space-y-2 mb-4">
+                            ${proj.tasks.map((t, idx) => `<div class="bg-black/30 p-2 rounded flex justify-between items-center"><span>${t}</span><button onclick="app.deleteTask('${proj.id}', ${idx})" class="text-red-400 hover:text-red-200">×</button></div>`).join('')}
+                        </div>
+                        <div class="flex gap-2">
+                            <input id="new-task-input" class="glass-input flex-1 rounded p-2" placeholder="Add directive...">
+                            <button onclick="app.addTask('${proj.id}')" class="glass-btn px-4 rounded">+</button>
+                        </div>
+                    `;
+                }
+            }
+            // ... (Task/Tag helpers same as before) ...
+            addTag(pid, tag) { if(!tag) return; const p = this.data.projects.find(x=>x.id===pid); if(!p.tags) p.tags=[]; if(!p.tags.includes(tag)) p.tags.push(tag); this.save(); }
+            removeTag(pid, tag) { const p = this.data.projects.find(x=>x.id===pid); p.tags=p.tags.filter(t=>t!==tag); this.save(); }
+            addTask(pid) { const i = document.getElementById('new-task-input'); if(!i.value) return; const p = this.data.projects.find(x=>x.id===pid); p.tasks.push(i.value); i.value=''; this.save(); }
+            deleteTask(pid, idx) { const p = this.data.projects.find(x=>x.id===pid); p.tasks.splice(idx,1); this.save(); }
+            seedVessels() { if(this.data.vessels.length>0) return alert("Vessels active."); this.data.vessels=[{name:"Adam",faculty:"Governance",domain:"Core Logic"},{name:"Logos",faculty:"Foresight",domain:"Data Synthesis"},{name:"Gaea",faculty:"Cognition",domain:"System Architecture"}]; this.save(); }
+            renderVessels() { document.getElementById('vessels-grid').innerHTML = this.data.vessels.map(v => `<div class="glass-panel p-4 rounded-lg border-t-2 border-orange-500/50"><h4 class="font-bold text-white text-lg">${v.name}</h4><p class="text-orange-300 text-sm">${v.faculty}</p><p class="text-gray-400 text-xs italic">${v.domain}</p></div>`).join(''); }
+
+            // --- NEXUS CHAT ---
+            async sendMessage() {
+                const input = document.getElementById('chat-input'); const text = input.value.trim(); const contextVal = document.getElementById('nexus-context').value;
+                if(!text) return;
+                let systemPrompt = PERSONAS.GLOBAL;
+                if (contextVal.startsWith("VESSEL:")) systemPrompt = PERSONAS[contextVal.split(":")[1]] || PERSONAS.GLOBAL;
+                else if (contextVal.startsWith("PROJECT:")) {
+                    const pid = contextVal.split(":")[1]; const p = this.data.projects.find(x=>x.id===pid);
+                    const tags = p.tags ? p.tags.join(', ') : '';
+                    if (p) systemPrompt = `You are Project Manager for "${p.name}". Tags: [${tags}]. Tasks: ${p.tasks.join(', ')}.`;
+                }
+                this.data.messages.push({ role: 'user', text, timestamp: Date.now(), context: contextVal });
+                input.value = ''; this.renderChat(); this.save();
+
+                const settings = this.data.settings;
+                if(!settings.apiKey) { this.pushMsg('model', "SYSTEM ALERT: No API Key."); return; }
+
+                document.getElementById('loading-indicator').classList.remove('hidden');
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${settings.apiKey}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text }] }], systemInstruction: { parts: [{ text: systemPrompt }] } })
+                    });
+                    const json = await res.json();
+                    const reply = json.candidates?.[0]?.content?.parts?.[0]?.text || "Error: No Content";
+                    this.pushMsg('model', reply);
+                } catch (e) { this.pushMsg('model', "Connection Error: " + e.message); }
+                document.getElementById('loading-indicator').classList.add('hidden');
+            }
+            pushMsg(role, text) { this.data.messages.push({ role, text, timestamp: Date.now() }); this.save(); }
+            
+            // Render Chat with SAVE Buttons
+            renderChat() {
+                const history = document.getElementById('chat-history');
+                history.innerHTML = this.data.messages.map((m, idx) => `
+                    <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} group">
+                         <div class="flex items-start gap-2 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}">
+                            <div class="p-3 rounded-lg text-sm relative ${m.role === 'user' ? 'bg-blue-600/40 text-white' : 'bg-orange-600/20 text-orange-100 border border-orange-500/30'}">
+                                ${m.text}
+                            </div>
+                            <button onclick="app.openArtifactModal(${idx})" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-white mt-2" title="Save to Vault">
+                                <i class="fa-solid fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>`).join('');
+                history.scrollTop = history.scrollHeight;
+            }
+
+            // --- SETTINGS & I/O ---
+            saveSettings() { this.data.settings.apiKey = document.getElementById('api-key-input').value; this.save(); alert("Configuration Saved."); location.reload(); }
+            exportData() { const d = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data)); const a = document.createElement('a'); a.href = d; a.download = "aetherium_backup.json"; document.body.appendChild(a); a.click(); a.remove(); }
+            importData(input) { const f = input.files[0]; if (!f) return; const r = new FileReader(); r.onload = (e) => { try { this.data = JSON.parse(e.target.result); this.save(); alert("Import Successful."); location.reload(); } catch (err) { alert("Error: " + err.message); } }; r.readAsText(f); }
+            render() { this.renderProjects(); this.renderVessels(); this.renderChat(); this.renderArtifacts(); }
+        }
+        const app = new LocalEngine();
+    </script>
+</body>
+</html>

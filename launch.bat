@@ -14,21 +14,20 @@ if not exist "Web_Interface\index.html" (
     exit /b 1
 )
 
-REM Try to start a simple HTTP server, or just open the file
-echo Attempting to start local server...
-python -m http.server 8000 >nul 2>&1
-if %errorlevel% equ 0 (
-    echo.
-    echo ✅ Local server started successfully!
-    echo.
-    echo 🌐 Opening Project Emergence in your browser...
-    echo    URL: http://localhost:8000/Web_Interface/
-    echo.
-    echo Press Ctrl+C to stop the server when done.
-    echo.
-    start http://localhost:8000/Web_Interface/
-    python -m http.server 8000
-) else (
+REM Start the API server
+echo Starting Emergence API Server...
+echo.
+echo 🌐 Opening Project Emergence in your browser...
+echo    URL: http://localhost:8000/Web_Interface/
+echo.
+echo Press Ctrl+C to stop the server.
+echo.
+echo ========================================
+echo    Project Emergence is now running!
+echo ========================================
+echo.
+start http://localhost:8000/Web_Interface/
+python server_api.py || (
     echo.
     echo ⚠️  Python server not available, opening file directly...
     echo.
@@ -39,7 +38,4 @@ if %errorlevel% equ 0 (
 )
 
 echo.
-echo ========================================
-echo    Project Emergence is now running!
-echo ========================================
 pause

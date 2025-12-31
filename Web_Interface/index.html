@@ -6,6 +6,13 @@
     <title>Project Emergence - Consciousness Engineering Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="favicon.svg">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/modern.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
     <!-- Loading Screen -->
@@ -90,6 +97,12 @@
                     <button id="dark-mode-toggle" class="action-btn" aria-label="Toggle dark mode" title="Toggle dark/light theme">
                         <i class="fas fa-moon"></i>
                     </button>
+                    <button id="syncBtn" class="action-btn" aria-label="Sync" title="Sync Data">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                    <button id="settingsBtn" class="action-btn" aria-label="Settings" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
                 </div>
             </div>
         </header>
@@ -103,97 +116,100 @@
                     <p>Your Consciousness Engineering Dashboard</p>
                 </div>
 
-                <!-- Welcome Message for New Users -->
-                <div class="welcome-section">
-                    <div class="welcome-card">
-                        <div class="welcome-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="welcome-content">
-                            <h3>Welcome to Consciousness Exploration</h3>
-                            <p>Project Emergence combines cutting-edge consciousness research with creative expression to explore the nature of awareness, perception, and human experience.</p>
-                            <div class="welcome-actions">
-                                <button class="welcome-btn primary" onclick="showSection('consciousness')">
-                                    <i class="fas fa-brain"></i> Explore Consciousness Tools
-                                </button>
-                                <button class="welcome-btn secondary" onclick="showSection('creative')">
-                                    <i class="fas fa-palette"></i> Start Creative Writing
-                                </button>
+                <div class="dashboard-grid">
+                    <!-- Welcome Message for New Users -->
+                    <div class="welcome-section">
+                        <div class="welcome-card">
+                            <div class="welcome-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="welcome-content">
+                                <h3>Welcome to Consciousness Exploration</h3>
+                                <p>Project Emergence combines cutting-edge consciousness research with creative expression to explore the nature of awareness, perception, and human experience.</p>
+                                <div class="welcome-actions">
+                                    <button class="btn" onclick="showSection('consciousness')">
+                                        <i class="fas fa-brain"></i> Explore Consciousness Tools
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="showSection('creative')">
+                                        <i class="fas fa-palette"></i> Start Creative Writing
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Quick Start Guide -->
-                <div class="quick-start">
-                    <h3><i class="fas fa-rocket"></i> Quick Start Guide</h3>
-                    <div class="workflow-steps">
-                        <div class="workflow-step">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <h4>Explore Consciousness</h4>
-                                <p>Analyze text for consciousness patterns and themes</p>
-                                <button class="step-btn" onclick="showSection('consciousness')">Try Pattern Analysis</button>
+                    <!-- Quick Start Guide -->
+                    <div class="quick-start">
+                        <h3><i class="fas fa-rocket"></i> Quick Start Guide</h3>
+                        <div class="workflow-steps">
+                            <div class="workflow-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Explore Consciousness</h4>
+                                    <p>Analyze text for consciousness patterns and themes</p>
+                                    <button class="step-btn" onclick="showSection('consciousness')">Try Pattern Analysis</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="workflow-step">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <h4>Generate Writing Prompts</h4>
-                                <p>Create AI-enhanced prompts for consciousness-themed writing</p>
-                                <button class="step-btn" onclick="showSection('creative')">Get Writing Prompts</button>
+                            <div class="workflow-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Generate Writing Prompts</h4>
+                                    <p>Create AI-enhanced prompts for consciousness-themed writing</p>
+                                    <button class="step-btn" onclick="showSection('creative')">Get Writing Prompts</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="workflow-step">
-                            <div class="step-number">3</div>
-                            <div class="step-content">
-                                <h4>Track Your Progress</h4>
-                                <p>Monitor your consciousness exploration journey</p>
-                                <button class="step-btn" onclick="showSection('profile')">View Analytics</button>
+                            <div class="workflow-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Track Your Progress</h4>
+                                    <p>Monitor your consciousness exploration journey</p>
+                                    <button class="step-btn" onclick="showSection('profile')">View Analytics</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- System Status Overview -->
-                <div class="system-overview">
-                    <div class="overview-cards">
-                        <div class="overview-card">
-                            <div class="overview-icon">
-                                <i class="fas fa-chart-line"></i>
+                    <!-- System Status Overview -->
+                    <div class="system-overview">
+                        <div class="overview-cards">
+                            <div class="overview-card">
+                                <div class="overview-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="overview-content">
+                                    <h4>Consciousness Analytics</h4>
+                                    <p>Advanced pattern recognition and state analysis</p>
+                                    <div class="overview-status active">Operational</div>
+                                </div>
                             </div>
-                            <div class="overview-content">
-                                <h4>Consciousness Analytics</h4>
-                                <p>Advanced pattern recognition and state analysis</p>
-                                <div class="overview-status active">Operational</div>
+                            <div class="overview-card">
+                                <div class="overview-icon">
+                                    <i class="fas fa-palette"></i>
+                                </div>
+                                <div class="overview-content">
+                                    <h4>Creative Writing</h4>
+                                    <p>AI-enhanced consciousness-themed content creation</p>
+                                    <div class="overview-status active">Operational</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="overview-card">
-                            <div class="overview-icon">
-                                <i class="fas fa-palette"></i>
-                            </div>
-                            <div class="overview-content">
-                                <h4>Creative Writing</h4>
-                                <p>AI-enhanced consciousness-themed content creation</p>
-                                <div class="overview-status active">Operational</div>
-                            </div>
-                        </div>
-                        <div class="overview-card">
-                            <div class="overview-icon">
-                                <i class="fas fa-microscope"></i>
-                            </div>
-                            <div class="overview-content">
-                                <h4>Research Integration</h4>
-                                <p>Scientific validation and interdisciplinary correlation</p>
-                                <div class="overview-status active">Operational</div>
+                            <div class="overview-card">
+                                <div class="overview-icon">
+                                    <i class="fas fa-microscope"></i>
+                                </div>
+                                <div class="overview-content">
+                                    <h4>Research Integration</h4>
+                                    <p>Scientific validation and interdisciplinary correlation</p>
+                                    <div class="overview-status active">Operational</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="activity-panel"></div>
             </section>
 
-            <!-- Aetherium Section -->
-            <section id="aetherium-section" class="content-section">
+            <!-- Consciousness Section -->
+            <section id="consciousness-section" class="content-section">
                 <div class="section-header">
                     <h2><i class="fas fa-robot"></i> Aetherium System</h2>
                     <p>AI Consciousness Development Environment</p>
@@ -501,6 +517,10 @@
                             </div>
                         </div>
                     </div>
+                    <div class="chart-container">
+                        <canvas id="writing-productivity-chart"></canvas>
+                        <canvas id="consciousness-integration-chart"></canvas>
+                    </div>
                 </div>
             </section>
 
@@ -660,5 +680,6 @@
     <script src="js/unifiedCommunication.js"></script>
     <script src="js/enhancedFeatures.js"></script>
     <script src="js/userAuth.js"></script>
+    <script src="js/animations.js"></script>
 </body>
 </html>

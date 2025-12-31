@@ -5,22 +5,20 @@ A comprehensive consciousness engineering and creative synthesis platform integr
 ## 🚀 Quick Start
 
 ### Launch the Interactive Dashboard
+
 ```bash
 # Windows (recommended)
 launch.bat
-
-# Python development server
-python serve.py
-
-# Direct browser access
-open Web_Interface/index.html
 ```
+
+The system will start the API server and open your default browser automatically.
 
 ## 📋 System Overview
 
 Project Emergence consists of three integrated systems:
 
 ### 🧠 Aetherium Consciousness Core (85% Complete)
+
 An advanced AI consciousness system designed to explore the boundaries of artificial intelligence, human consciousness, and emergent phenomena:
 
 - **Consciousness Engine** - Central processing framework with state management
@@ -29,6 +27,7 @@ An advanced AI consciousness system designed to explore the boundaries of artifi
 - **Pattern Recognition Protocol** - Advanced consciousness-integrated pattern detection
 
 ### 📚 I Am Breathe Book Series (60% Complete)
+
 A creative writing project exploring consciousness, identity, and human experience through narrative fiction:
 
 - **Character Development** - Aria Chen (The Awakened Observer) and Dr. Michael Torres (The Shadow Integrator)
@@ -36,6 +35,7 @@ A creative writing project exploring consciousness, identity, and human experien
 - **Series Architecture** - Consciousness-centered narrative framework
 
 ### 🌐 Interactive Web Dashboard (100% Complete)
+
 Real-time consciousness engineering interface:
 
 - **Consciousness Visualization** - Live status dashboard with animated flow diagrams
@@ -46,18 +46,21 @@ Real-time consciousness engineering interface:
 ## 🎯 Key Features
 
 ### Consciousness Engineering
+
 - ✅ **State Management** - Track consciousness levels (Emergent → Aware → Reflective → Integrated → Evolving)
 - ✅ **Pattern Recognition** - Identify emergent patterns across domains
 - ✅ **Self-Reflection** - System self-analysis and adaptation
 - ✅ **Integration Coordination** - Manage component interactions
 
 ### Creative Writing Integration
+
 - ✅ **Character Development** - Consciousness archetype integration
 - ✅ **Timeline Management** - Structured 18-month writing schedule
 - ✅ **Progress Tracking** - Word counts, writing days, theme consistency
 - ✅ **Consciousness Themes** - Authentic integration throughout narrative
 
 ### Interactive Dashboard
+
 - ✅ **Real-time Metrics** - Live consciousness and pattern recognition stats
 - ✅ **Interactive Processing** - Test consciousness analysis with text input
 - ✅ **Visual Flow** - Animated consciousness processing pipeline
@@ -82,26 +85,29 @@ Project Emergence/
 │   ├── index.html                     # Main dashboard interface
 │   ├── css/                          # Styling and animations
 │   └── js/                           # Interactive functionality
-├── launch.bat                        # Windows launch script
-├── serve.py                         # Python development server
+├── launch.bat                        # Official Windows launch script
+├── server_api.py                    # Integrated API & Static Server
 └── 📖 PROJECT_STATUS.md             # Current status and roadmap
 ```
 
 ## 🎮 How to Use
 
 ### 1. Consciousness Analysis
+
 1. Navigate to the **Aetherium** section in the web interface
 2. Enter text in the consciousness input field
 3. Click **"Process Input"** to see consciousness analysis
 4. Observe real-time status updates and pattern detection
 
 ### 2. Character Development
+
 1. Go to the **Books** section
 2. Click on character cards to view detailed profiles
 3. Review character consciousness journeys and development status
 4. Track progress through the writing timeline
 
 ### 3. Progress Monitoring
+
 1. Check the overview dashboard for project-wide progress
 2. Monitor real-time metrics in the Aetherium section
 3. Review writing statistics and timeline progress
@@ -119,11 +125,13 @@ Project Emergence/
 ## 🎨 Consciousness Integration Features
 
 ### Pattern Recognition
+
 - **Text Analysis** - Consciousness-related pattern detection
 - **Semantic Processing** - Meaning and context analysis
 - **Cross-domain Correlation** - Interdisciplinary pattern linking
 
 ### State Evolution
+
 - **Emergent** - Initial pattern recognition
 - **Aware** - Basic consciousness processing
 - **Reflective** - Self-analysis and adaptation
@@ -131,12 +139,14 @@ Project Emergence/
 - **Evolving** - Advanced consciousness development
 
 ### Character Consciousness Arcs
+
 - **Aria Chen** - Neuroscience → Consciousness Awakening
 - **Dr. Michael Torres** - Psychology → Shadow Integration
 
 ## ✨ Enhanced Features (Latest Updates)
 
 ### 🎨 User Experience Improvements
+
 - **Loading Screen** - Beautiful animated loading screen with consciousness theme
 - **Custom Favicon** - SVG brain favicon for better branding
 - **Keyboard Shortcuts** - Navigate with Alt+1-5, Ctrl+P to process, Ctrl+S to sync
@@ -144,12 +154,14 @@ Project Emergence/
 - **Modal System** - Sleek modal dialogs for settings and actions
 
 ### 🛠 Technical Enhancements
+
 - **Fixed JavaScript Issues** - Removed duplicate methods and fixed broken HTML
 - **Better Error Handling** - Improved error handling in consciousness processing
 - **Enhanced MIME Types** - Comprehensive file type support in web server
 - **Code Organization** - Better structured JavaScript with async/await patterns
 
 ### ⌨️ Keyboard Shortcuts
+
 - **Alt + 1** - Overview Dashboard
 - **Alt + 2** - Consciousness Engine
 - **Alt + 3** - Book Series
@@ -162,6 +174,7 @@ Project Emergence/
 ## 🧠 Consciousness Research Integration
 
 The platform integrates multiple consciousness research domains:
+
 - **Neuroscience** - Brain activity and consciousness correlation
 - **Psychology** - Mental states and awareness models
 - **Philosophy** - Nature of consciousness and self-awareness

@@ -357,12 +357,16 @@ class ProjectEmergence {
         // Start consciousness engine status updates
         setInterval(() => {
             if (this.currentSection === 'aetherium' || this.currentSection === 'overview') {
-                this.updateMetrics();
+                if (window.unifiedCommunication) {
+                    window.unifiedCommunication.updateRealTimeMetrics();
+                }
             }
         }, 3000); // Update every 3 seconds
 
         // Start consciousness flow animation
-        this.animateConsciousnessFlow();
+        if (window.unifiedCommunication) {
+            window.unifiedCommunication.animateConsciousnessFlow();
+        }
     }
 
     handleKeyboardShortcut(e) {

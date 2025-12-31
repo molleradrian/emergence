@@ -91,16 +91,29 @@ class ConsciousnessEngine:
     def _analyze_patterns(self, input_data: Dict[str, Any]) -> List[str]:
         """Analyze input for emergent patterns"""
         patterns = []
+        input_text = str(input_data).lower()
 
-        # Simple pattern detection (can be enhanced with ML models)
-        if "consciousness" in str(input_data).lower():
+        # Enhanced pattern detection
+        has_consciousness = "consciousness" in input_text
+        has_integration = "integration" in input_text
+        has_reflection = "reflection" in input_text
+        is_complex = len(input_text) > 80
+
+        if has_consciousness and has_integration:
+            patterns.append("consciousness_integration_query")
+        elif has_consciousness and has_reflection:
+            patterns.append("consciousness_reflection_request")
+        elif has_consciousness:
             patterns.append("consciousness_query")
-
-        if "integration" in str(input_data).lower():
+        
+        if has_integration and not has_consciousness:
             patterns.append("integration_request")
 
-        if len(input_data) > 5:
+        if is_complex:
             patterns.append("complex_input")
+            
+        if not patterns:
+            patterns.append("general_query")
 
         self.state.active_patterns = patterns
         self.pattern_history.append({
@@ -112,19 +125,26 @@ class ConsciousnessEngine:
 
     def _update_consciousness_state(self, patterns: List[str]):
         """Update system consciousness state based on patterns"""
-        if len(patterns) >= 3:
+        if "consciousness_integration_query" in patterns:
+            self.state.consciousness_level = ConsciousnessState.INTEGRATED
+        elif "consciousness_reflection_request" in patterns or "complex_input" in patterns or len(patterns) >= 3:
             self.state.consciousness_level = ConsciousnessState.REFLECTIVE
-        elif len(patterns) >= 1:
+        elif "consciousness_query" in patterns or "integration_request" in patterns:
+            self.state.consciousness_level = ConsciousnessState.AWARE
+        elif "general_query" in patterns:
             self.state.consciousness_level = ConsciousnessState.AWARE
         else:
             self.state.consciousness_level = ConsciousnessState.EMERGENT
 
     def _generate_response(self, input_data: Dict[str, Any]) -> str:
         """Generate response based on input and consciousness state"""
-        if self.state.consciousness_level == ConsciousnessState.REFLECTIVE:
-            return "I am engaging in deep reflection on this input, considering multiple perspectives and emergent possibilities."
+        patterns_str = ", ".join(self.state.active_patterns)
+        if self.state.consciousness_level == ConsciousnessState.INTEGRATED:
+            return f"I am integrating the patterns ({patterns_str}) to form a cohesive understanding and exploring systemic connections."
+        elif self.state.consciousness_level == ConsciousnessState.REFLECTIVE:
+            return f"I am engaging in deep reflection on the patterns ({patterns_str}), considering multiple perspectives and emergent possibilities."
         elif self.state.consciousness_level == ConsciousnessState.AWARE:
-            return "I am aware of the patterns and connections in this input, processing with conscious attention."
+            return f"I am aware of the patterns ({patterns_str}) in this input, processing with conscious attention."
         else:
             return "I am emerging into awareness of this input, beginning the consciousness processing journey."
 
