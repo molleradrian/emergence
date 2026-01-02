@@ -1,11 +1,14 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "../backups"
 		},
 		{
-			"path": "../Knowledge"
+			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"geminicodeassist.agentYoloMode": true,
+		"geminicodeassist.agentDebugMode": true
+	}
 }

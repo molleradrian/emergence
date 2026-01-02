@@ -16,7 +16,7 @@
  */
 
 import 'dotenv/config';
-import { ai } from '@/ai/genkit';
+import { defineFlow, definePrompt } from 'genkit';
 import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
@@ -84,7 +84,7 @@ export async function generateTestSuite(
   return generateTestSuiteFlow(input);
 }
 
-const generateTestSuitePrompt = ai.definePrompt({
+const generateTestSuitePrompt = definePrompt({
   name: 'generateTestSuitePrompt',
   input: { schema: GenerateTestSuiteInputSchema },
   output: { schema: GenerateTestSuiteOutputSchema },
@@ -124,7 +124,7 @@ const generateTestSuitePrompt = ai.definePrompt({
 Provide a complete testing suite with actual code examples, configuration files, and detailed explanations for each testing level.`,
 });
 
-const generateTestSuiteFlow = ai.defineFlow(
+const generateTestSuiteFlow = defineFlow(
   {
     name: 'generateTestSuiteFlow',
     inputSchema: GenerateTestSuiteInputSchema,

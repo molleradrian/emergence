@@ -16,7 +16,7 @@
  */
 
 import 'dotenv/config';
-import { ai } from '@/ai/genkit';
+import { defineFlow, definePrompt } from 'genkit';
 import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
@@ -75,7 +75,7 @@ export async function generateEnhancedAnalysis(
   return generateEnhancedAnalysisFlow(input);
 }
 
-const generateEnhancedAnalysisPrompt = ai.definePrompt({
+const generateEnhancedAnalysisPrompt = definePrompt({
   name: 'generateEnhancedAnalysisPrompt',
   input: { schema: GenerateEnhancedAnalysisInputSchema },
   output: { schema: GenerateEnhancedAnalysisOutputSchema },
@@ -124,7 +124,7 @@ const generateEnhancedAnalysisPrompt = ai.definePrompt({
 Provide a detailed, structured analysis covering all aspects mentioned above. Be specific and actionable in your recommendations.`,
 });
 
-const generateEnhancedAnalysisFlow = ai.defineFlow(
+const generateEnhancedAnalysisFlow = defineFlow(
   {
     name: 'generateEnhancedAnalysisFlow',
     inputSchema: GenerateEnhancedAnalysisInputSchema,
