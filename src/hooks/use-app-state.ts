@@ -1,1 +1,1 @@
-export function useAppState() { return { analysisReport: {}, projectName: "Project Emergence" }; }
+export function useAppState() { return { analysisReport: "", projectName: "Project Emergence" }; }

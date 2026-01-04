@@ -20,11 +20,11 @@ import {
   generateEnhancedAnalysisAction,
   generateTestSuiteAction,
   generateMultiModalWorkflowAction,
-  type GenerateCodeInput,
-  type GenerateEnhancedAnalysisInput,
-  type GenerateTestSuiteInput,
-  type GenerateMultiModalWorkflowInput
 } from '@/app/actions';
+import { GenerateCodeInput } from '@/ai/flows/generate-code';
+import { GenerateEnhancedAnalysisInput } from '@/ai/flows/generate-enhanced-analysis';
+import { GenerateTestSuiteInput } from '@/ai/flows/generate-test-suite';
+import { GenerateMultiModalWorkflowInput } from '@/ai/flows/generate-multi-modal-workflow';
 
 interface AIToolsPanelProps {
   className?: string;
