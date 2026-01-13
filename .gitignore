@@ -44,6 +44,7 @@ Desktop.ini
 
 # Log files
 *.log
+/logs/
 
 # Personal files (uncomment if you have any)
 # personal/

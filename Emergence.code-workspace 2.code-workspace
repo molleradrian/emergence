@@ -1,7 +1,11 @@
 {
-	"folders": [],
-	"settings": {
-		"geminicodeassist.agentYoloMode": true,
-		"geminicodeassist.agentDebugMode": true
-	}
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Knowledge"
+		}
+	],
+	"settings": {}
 }
