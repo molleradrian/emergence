@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../backups"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"geminicodeassist.agentYoloMode": true,
+		"geminicodeassist.agentDebugMode": true
+	}
+}
