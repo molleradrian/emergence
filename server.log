@@ -1,0 +1,6 @@
+Backend module loaded successfully
+Starting Emergence API Server on port 8000
+Root Directory: C:\Users\juanita\Desktop\Emergence
+Server running at http://localhost:8000
+   -> Frontend: http://localhost:8000/Web_Interface/
+   -> API:      http://localhost:8000/api/analyze
