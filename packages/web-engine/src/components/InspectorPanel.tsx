@@ -10,6 +10,7 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({ node, onClose })
     if (!node) return null;
 
     const isProject = node.type === 'PROJECT';
+    const data = node.data as any; // Cast to any to avoid TS errors for now, or use type guards
 
     return (
         <div className="inspector-panel">
@@ -24,11 +25,11 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({ node, onClose })
 
                 {isProject ? (
                     <>
-                        <p style={{ fontSize: '14px', lineHeight: '1.5' }}>{node.data.description || 'No description available.'}</p>
+                        <p style={{ fontSize: '14px', lineHeight: '1.5' }}>{data.description || 'No description available.'}</p>
                         <div style={{ marginTop: '20px' }}>
                             <h4 style={{ fontSize: '12px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: '8px' }}>Tags</h4>
                             <div className="tag-list">
-                                {(node.data.tags || []).map((tag: string) => (
+                                {(data.tags || []).map((tag: string) => (
                                     <span key={tag} className="tag-badge">{tag}</span>
                                 ))}
                             </div>
@@ -42,12 +43,12 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({ node, onClose })
                     </>
                 ) : (
                     <>
-                        <p style={{ fontSize: '14px', lineHeight: '1.5' }}>{node.data.desc}</p>
+                        <p style={{ fontSize: '14px', lineHeight: '1.5' }}>{data.desc}</p>
                         <div className="task-status">
                             <div className="status-dot" style={{
-                                background: node.data.done ? '#10b981' : '#3b82f6'
+                                background: data.done ? '#10b981' : '#3b82f6'
                             }}></div>
-                            <span style={{ fontSize: '12px' }}>{node.data.done ? 'Completed' : 'Pending'}</span>
+                            <span style={{ fontSize: '12px' }}>{data.done ? 'Completed' : 'Pending'}</span>
                         </div>
                     </>
                 )}

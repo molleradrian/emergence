@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { invokeEmergenceFlow } from "./GenkitClient";
 import type { ContextMatrix, EmergenceResponse } from "./GenkitClient";
+import type { HistoryEntry } from "./emergenceFlow";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { GENESIS_HISTORY } from "./genesisHistory";
 
@@ -57,7 +58,7 @@ export const EmotionCheckIn: React.FC<{ onResult?: (res: EmergenceResponse) => v
             const response = await invokeEmergenceFlow(matrix);
             setResult(response);
             if (response.new_entry) {
-                setHistory([...history, response.new_entry]);
+                setHistory([...history, response.new_entry as HistoryEntry]);
             }
             if (onResult) onResult(response);
         } catch (error) {

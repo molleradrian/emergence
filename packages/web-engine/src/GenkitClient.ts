@@ -21,6 +21,7 @@ export interface EmergenceResponse {
         source: number;
         associations: number;
     };
+    new_entry?: unknown;
 }
 
 export interface AgentResponse {

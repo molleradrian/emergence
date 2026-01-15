@@ -197,7 +197,6 @@ export class GraphEngine {
         // Draw Emergence Background Effect
         if (this.emergenceState) {
             const result = this.emergenceState.result;
-            const valence = this.emergenceState.context.valence;
             const alpha = 0.05 + (Math.sin(Date.now() / 1000) + 1) * 0.02; // Slow pulse
 
             let bgColor = 'rgba(0, 240, 255, 0.05)'; // Default blue
@@ -253,8 +252,6 @@ export class GraphEngine {
                     this.ctx!.shadowBlur = 15 + Math.sin(Date.now() / 500) * 5;
                 }
             }
-
-            this.ctx!.fillStyle = color;
             this.ctx!.shadowColor = color;
             this.ctx!.fill();
             this.ctx!.shadowBlur = 0;
