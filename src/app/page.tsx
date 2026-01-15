@@ -24,8 +24,9 @@ import { SimulationsView } from '@/components/nexus/SimulationsView';
 import { CodexView } from '@/components/nexus/CodexView';
 import { CheckInView } from '@/components/nexus/CheckInView';
 import { SystemDiagnostics } from '@/components/nexus/SystemDiagnostics';
+import LatticeGovernor from '@/components/LatticeGovernor';
 
-type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin';
+type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin' | 'lattice';
 
 interface Message {
     id: string;
@@ -192,6 +193,7 @@ export default function NexusPage() {
         { id: 'hlog' as ViewId, icon: '💓', label: 'H_log' },
         { id: 'simulations' as ViewId, icon: '⚙️', label: 'Simulations' },
         { id: 'codex' as ViewId, icon: '📚', label: 'Codex' },
+        { id: 'lattice' as ViewId, icon: '⚡', label: 'Governor' },
     ];
 
     if (authLoading) {
@@ -287,6 +289,7 @@ export default function NexusPage() {
                         <CheckInView />
                     </div>
                 )}
+                {currentView === 'lattice' && <LatticeGovernor />}
             </main>
 
             {/* Diagnostics Overlay */}
