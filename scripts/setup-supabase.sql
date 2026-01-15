@@ -61,12 +61,32 @@ CREATE TABLE IF NOT EXISTS public.hlog_events (
     modified_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 6. Simulations Table
+CREATE TABLE IF NOT EXISTS public.simulations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    description TEXT,
+    parameters JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 7. Simulation Runs Table
+CREATE TABLE IF NOT EXISTS public.simulation_runs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "simulationId" UUID REFERENCES public.simulations(id),
+    status TEXT NOT NULL DEFAULT 'running',
+    results JSONB DEFAULT '[]',
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- Enable RLS
 ALTER TABLE public.artifacts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.vessels ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.vcp_signals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.hlog_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.simulations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.simulation_runs ENABLE ROW LEVEL SECURITY;
 
 -- Simple permissive policies for v1.0 (Restrict these in production!)
 CREATE POLICY "Allow All" ON public.artifacts FOR ALL USING (true) WITH CHECK (true);
@@ -74,3 +94,5 @@ CREATE POLICY "Allow All" ON public.vessels FOR ALL USING (true) WITH CHECK (tru
 CREATE POLICY "Allow All" ON public.projects FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow All" ON public.vcp_signals FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow All" ON public.hlog_events FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow All" ON public.simulations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow All" ON public.simulation_runs FOR ALL USING (true) WITH CHECK (true);

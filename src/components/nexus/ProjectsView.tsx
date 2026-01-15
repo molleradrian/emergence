@@ -3,6 +3,7 @@ import { ProjectGraph } from '@/components/project-graph';
 import { Play, PlayCircle, Loader2, ScrollText } from 'lucide-react';
 import { ScenarioRunner } from '@/lib/scenario-runner';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ProjectsViewProps {
     projects: Project[];
@@ -47,7 +48,12 @@ export function ProjectsView({ projects, vessels, onLoadData, onOpenVesselAssign
 
     return (
         <div className="space-y-6">
-            <h2 className="text-lg font-medium">📋 Command Deck</h2>
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-medium">📋 Command Deck</h2>
+                <button onClick={() => ProjectStore.seedInitialProjects().then(onLoadData)} className="glass-btn text-[10px] uppercase font-bold py-2 px-4 border border-white/10 hover:border-[var(--neon-purple)] transition-all">
+                    🌱 Seed Initial Projects
+                </button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Project creation */}
                 <div className="glass-panel p-5">

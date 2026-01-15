@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import * as pdf from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
 import mammoth from 'mammoth';
 
 export interface DocumentChunk {
@@ -63,8 +63,9 @@ export class DocumentProcessor {
         
         if (ext === '.pdf') {
             const dataBuffer = fs.readFileSync(filePath);
-            const data = await pdf(dataBuffer);
-            return data.text;
+            const parser = new PDFParse({ data: dataBuffer });
+            const result = await parser.getText();
+            return result.text;
         } else if (ext === '.docx') {
             const result = await mammoth.extractRawText({ path: filePath });
             return result.value;

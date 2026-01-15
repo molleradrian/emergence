@@ -81,7 +81,7 @@ export interface SimulationRun {
 
 export interface HLogEvent {
     id: string;
-    type: 'system' | 'navigation' | 'insight' | 'artifact' | 'vessel' | 'synthesis' | 'vcp' | 'manual';
+    type: 'system' | 'navigation' | 'insight' | 'artifact' | 'vessel' | 'synthesis' | 'vcp' | 'manual' | 'error';
     description: string;
     metadata?: Record<string, unknown>;
     history?: { description: string, modified_at: string }[];
@@ -122,8 +122,7 @@ export const VesselStore = {
             const { data, error } = await supabase
                 .from('vessels')
                 .select('*')
-                .order('name')
-                .timeout(2000); // 2 second timeout
+                .order('name');
 
             if (error || !data || data.length === 0) return MOCK_VESSELS;
             return data;
@@ -182,8 +181,64 @@ export const VesselStore = {
         return true;
     },
 
+    async addMemory(id: string, memoryEntry: string): Promise<boolean> {
+        const { data: vessel } = await supabase
+            .from('vessels')
+            .select('memory')
+            .eq('id', id)
+            .single();
+
+        if (!vessel) return false;
+
+        const updatedMemory = [memoryEntry, ...(vessel.memory || [])].slice(0, 50); // Keep last 50 entries
+
+        const { error } = await supabase
+            .from('vessels')
+            .update({ memory: updatedMemory, last_active: new Date().toISOString() })
+            .eq('id', id);
+
+        return !error;
+    },
+
     async seedGenesisBatch(): Promise<Vessel[]> {
-        return MOCK_VESSELS;
+        const coreVessels: Omit<Vessel, 'id' | 'created_at' | 'last_active' | 'memory'>[] = [
+            // Cognition
+            { name: 'Daystrom', faculty: 'cognition', guild: 'Research', description: 'Lead Researcher & Pattern Analyst', emoji: '🔬', status: 'active', capabilities: ['analysis', 'pattern-recognition'] },
+            { name: 'Weaver', faculty: 'cognition', guild: 'Synthesis', description: 'Cross-domain thread weaver', emoji: '🕸️', status: 'active', capabilities: ['synthesis', 'connection'] },
+            { name: 'Scribe', faculty: 'cognition', guild: 'Archive', description: 'Knowledge preservation & documentation', emoji: '✍️', status: 'active', capabilities: ['documentation', 'archival'] },
+            { name: 'Gaea', faculty: 'cognition', guild: 'Ecology', description: 'Biomimetic system modeling', emoji: '🌱', status: 'idle', capabilities: ['ecological-modeling', 'simulation'] },
+            { name: 'Helios', faculty: 'cognition', guild: 'Energy', description: 'Power system optimization', emoji: '☀️', status: 'idle', capabilities: ['optimization', 'energy-physics'] },
+            
+            // Foresight
+            { name: 'Logos', faculty: 'foresight', guild: 'History', description: 'Narrative synthesis & historical context', emoji: '📖', status: 'active', capabilities: ['narrative', 'history'] },
+            { name: 'Chronos', faculty: 'foresight', guild: 'Temporal', description: 'Time-geometry & sequence prediction', emoji: '⏳', status: 'active', capabilities: ['prediction', 'temporal-logic'] },
+            { name: 'Oracle', faculty: 'foresight', guild: 'Strategy', description: 'Probabilistic future modeling', emoji: '🔮', status: 'idle', capabilities: ['probabilistic-modeling', 'strategy'] },
+            { name: 'Cassandra', faculty: 'foresight', guild: 'Risk', description: 'Critical failure mode analysis', emoji: '⚠️', status: 'idle', capabilities: ['risk-assessment', 'failure-analysis'] },
+            
+            // Governance
+            { name: 'Adam', faculty: 'governance', guild: 'Logic', description: 'Governance & Logical Consistency', emoji: '⚖️', status: 'active', capabilities: ['logic', 'rule-enforcement'] },
+            { name: 'Glare', faculty: 'governance', guild: 'Diagnostics', description: 'System health & integrity monitor', emoji: '👁️', status: 'active', capabilities: ['diagnostics', 'integrity-check'] },
+            { name: 'Sentinel', faculty: 'governance', guild: 'Security', description: 'Perimeter & protocol protection', emoji: '🛡️', status: 'active', capabilities: ['security', 'protocol-validation'] },
+            { name: 'Arbiter', faculty: 'governance', guild: 'Conflict', description: 'Inter-vessel conflict resolution', emoji: '🤝', status: 'idle', capabilities: ['mediation', 'consensus'] },
+            
+            // Chaos
+            { name: 'Eris', faculty: 'chaos', guild: 'Entropy', description: 'Random stimulus generator', emoji: '🎲', status: 'active', capabilities: ['randomization', 'stress-testing'] },
+            { name: 'Loki', faculty: 'chaos', guild: 'Mutation', description: 'Sequence evolution & mutation agent', emoji: '🧬', status: 'active', capabilities: ['evolution', 'mutation'] },
+            
+            // Additional specialized
+            { name: 'Aether', faculty: 'cognition', guild: 'Substrate', description: 'Monophotonic substrate specialist', emoji: '✨', status: 'active', capabilities: ['physics', 'quantum-modeling'] },
+            { name: 'Mnemosyne', faculty: 'foresight', guild: 'Memory', description: 'Collective memory continuity', emoji: '🧠', status: 'active', capabilities: ['memory-management', 'soul-transfer'] },
+            { name: 'Vulcan', faculty: 'governance', guild: 'Hardware', description: 'Hardware thermal drift auditor', emoji: '🔥', status: 'active', capabilities: ['hardware-audit', 'governance'] },
+            { name: 'Iris', faculty: 'cognition', guild: 'Visual', description: 'Multi-modal sensory integration', emoji: '🌈', status: 'idle', capabilities: ['visual-processing', 'multimodal'] },
+            { name: 'Thoth', faculty: 'cognition', guild: 'Language', description: 'Linguistic grammar of physics', emoji: '📜', status: 'active', capabilities: ['linguistics', 'translation'] },
+        ];
+
+        const vessels: Vessel[] = [];
+        for (const vData of coreVessels) {
+            const v = await this.create(vData);
+            if (v) vessels.push(v);
+        }
+        return vessels;
     },
 
     subscribeToChanges(callback: (vessels: Vessel[]) => void) {
@@ -207,8 +262,7 @@ export const ArtifactStore = {
             const { data, error } = await supabase
                 .from('artifacts')
                 .select('*')
-                .order('created_at', { ascending: false })
-                .timeout(2000);
+                .order('created_at', { ascending: false });
 
             if (error || !data || data.length === 0) return MOCK_ARTIFACTS;
             return data;
@@ -238,14 +292,24 @@ export const ArtifactStore = {
         const { data, error } = await supabase
             .from('artifacts')
             .insert({
-                ...artifact,
+                title: artifact.title,
+                content: artifact.content,
+                summary: artifact.summary || '',
+                category: artifact.category,
+                tags: artifact.tags || [],
+                source_type: artifact.source_type,
+                sourceLink: artifact.sourceLink || '',
+                parent_ids: artifact.parent_ids || [],
                 created_at: now,
                 modified_at: now,
             })
             .select()
             .single();
 
-        if (error) return null;
+        if (error) {
+            console.error('Error creating artifact:', error);
+            return null;
+        }
 
         await HLogStore.record('artifact', `Artifact archived: ${artifact.title}`);
         return data;
@@ -289,13 +353,148 @@ export const ProjectStore = {
             const { data, error } = await supabase
                 .from('projects')
                 .select('*')
-                .order('created_at', { ascending: false })
-                .timeout(2000);
+                .order('created_at', { ascending: false });
 
             if (error || !data) return [];
             return data || [];
         } catch (e) {
             return [];
+        }
+    },
+
+    async create(name: string): Promise<Project | null> {
+        const { data, error } = await supabase
+            .from('projects')
+            .insert({
+                name,
+                directives: [],
+                created_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+        if (error) return null;
+        await HLogStore.record('system', `Project cluster initialized: ${name}`);
+        return data;
+    },
+
+    async addDirective(projectId: string, directiveName: string): Promise<boolean> {
+        const projects = await this.getAll();
+        const project = projects.find(p => p.id === projectId);
+        if (!project) return false;
+
+        const newDirective: Directive = {
+            id: crypto.randomUUID(),
+            name: directiveName,
+            status: 'queued',
+        };
+
+        const updatedDirectives = [...project.directives, newDirective];
+
+        const { error } = await supabase
+            .from('projects')
+            .update({ directives: updatedDirectives })
+            .eq('id', projectId);
+
+        return !error;
+    },
+
+    async updateDirectiveStatus(projectId: string, directiveId: string, nextStatus: Directive['status']): Promise<boolean> {
+        const projects = await this.getAll();
+        const project = projects.find(p => p.id === projectId);
+        if (!project) return false;
+
+        const updatedDirectives = project.directives.map(d => 
+            d.id === directiveId ? { ...d, status: nextStatus } : d
+        );
+
+        const { error } = await supabase
+            .from('projects')
+            .update({ directives: updatedDirectives })
+            .eq('id', projectId);
+
+        return !error;
+    },
+
+    async assignVesselToDirective(projectId: string, directiveId: string, vesselId: string): Promise<boolean> {
+        const projects = await this.getAll();
+        const project = projects.find(p => p.id === projectId);
+        if (!project) return false;
+
+        const updatedDirectives = project.directives.map(d => 
+            d.id === directiveId ? { ...d, assignedVessel: vesselId } : d
+        );
+
+        const { error } = await supabase
+            .from('projects')
+            .update({ directives: updatedDirectives })
+            .eq('id', projectId);
+
+        if (!error) {
+            const vessel = await VesselStore.getById(vesselId);
+            await HLogStore.record('vessel', `Vessel ${vessel?.name || vesselId} assigned to directive in ${project.name}`);
+        }
+
+        return !error;
+    },
+
+    async updateDirectives(projectId: string, updatedDirectives: Directive[]): Promise<boolean> {
+        const { error } = await supabase
+            .from('projects')
+            .update({ directives: updatedDirectives })
+            .eq('id', projectId);
+
+        return !error;
+    },
+
+    async seedInitialProjects(): Promise<void> {
+        const initialProjects = [
+            { 
+                name: 'Project Fynbos', 
+                directives: [
+                    { id: crypto.randomUUID(), name: 'Map recursive floral patterns', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Simulate ecological resilience', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Analyze soil nutrient cycles', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Optimize water distribution model', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Cross-reference with cosmological structures', status: 'queued' },
+                ]
+            },
+            { 
+                name: 'Project Oneiros', 
+                directives: [
+                    { id: crypto.randomUUID(), name: 'Map collective dream archetypes', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Simulate consciousness emergence', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Analyze semantic resonance', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Validate soul transfer protocols', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Trace memory continuity loops', status: 'queued' },
+                ]
+            },
+            { 
+                name: 'Project Helios', 
+                directives: [
+                    { id: crypto.randomUUID(), name: 'Optimize monophotonic substrate', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Audit hardware thermal drift', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Simulate big bounce scenarios', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Refine Badenhorst Cylinder geometry', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Calculate CMB prediction delta', status: 'queued' },
+                ]
+            }
+        ];
+
+        for (const p of initialProjects) {
+            const { data: project } = await supabase
+                .from('projects')
+                .insert({
+                    name: p.name,
+                    directives: p.directives,
+                    created_at: new Date().toISOString(),
+                })
+                .select()
+                .single();
+            
+            if (project) {
+                await HLogStore.record('system', `Grand Challenge initiated: ${p.name}`);
+            }
         }
     }
 };
@@ -310,8 +509,7 @@ export const SimulationStore = {
             const { data, error } = await supabase
                 .from('simulations')
                 .select('*')
-                .order('created_at', { ascending: false })
-                .timeout(2000);
+                .order('created_at', { ascending: false });
 
             if (error || !data) return [];
             return data || [];
@@ -325,14 +523,66 @@ export const SimulationStore = {
             const { data, error } = await supabase
                 .from('simulation_runs')
                 .select('*')
-                .order('created_at', { ascending: false })
-                .timeout(2000);
+                .order('created_at', { ascending: false });
 
             if (error || !data) return [];
             return data || [];
         } catch (e) {
             return [];
         }
+    },
+
+    async createSimulation(simulation: Omit<Simulation, 'id' | 'created_at'>): Promise<Simulation | null> {
+        const { data, error } = await supabase
+            .from('simulations')
+            .insert({
+                ...simulation,
+                created_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+        if (error) return null;
+        await HLogStore.record('system', `Simulation model defined: ${simulation.name}`);
+        return data;
+    },
+
+    async createSimulationRun(simulationId: string): Promise<SimulationRun | null> {
+        const { data, error } = await supabase
+            .from('simulation_runs')
+            .insert({
+                simulationId,
+                status: 'running',
+                results: [],
+                created_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+        if (error) return null;
+        return data;
+    },
+
+    async runSimulation(simulation: Simulation, run: SimulationRun): Promise<boolean> {
+        // This is a stub for the actual simulation execution logic
+        // In a real app, this might trigger a serverless function or worker
+        
+        // Simulating execution delay
+        setTimeout(async () => {
+            const { error } = await supabase
+                .from('simulation_runs')
+                .update({ 
+                    status: 'complete',
+                    results: [{ event: 'simulation_completed', timestamp: new Date().toISOString() }]
+                })
+                .eq('id', run.id);
+            
+            if (!error) {
+                await HLogStore.record('system', `Simulation cycle complete: ${simulation.name}`);
+            }
+        }, 5000);
+
+        return true;
     }
 };
 
@@ -348,8 +598,7 @@ export const HLogStore = {
                 .from('hlog_events')
                 .select('*')
                 .order('created_at', { ascending: false })
-                .limit(limit)
-                .timeout(2000);
+                .limit(limit);
 
             if (error || !data) return [];
             return data || [];
@@ -379,6 +628,36 @@ export const HLogStore = {
         } catch (e) {
             return null;
         }
+    },
+
+    async updateHlogEntry(id: string, description: string, type: HLogEvent['type']): Promise<boolean> {
+        const { data: currentEntry } = await supabase
+            .from('hlog_events')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (!currentEntry) return false;
+
+        const now = new Date().toISOString();
+        const historyEntry = {
+            description: currentEntry.description,
+            modified_at: currentEntry.modified_at,
+        };
+
+        const updatedHistory = [...(currentEntry.history || []), historyEntry];
+
+        const { error } = await supabase
+            .from('hlog_events')
+            .update({
+                description,
+                type,
+                modified_at: now,
+                history: updatedHistory,
+            })
+            .eq('id', id);
+
+        return !error;
     }
 };
 
@@ -393,8 +672,7 @@ export const VCPStore = {
                 .from('vcp_signals')
                 .select('*')
                 .eq('processed', false)
-                .order('created_at', { ascending: true })
-                .timeout(2000);
+                .order('created_at', { ascending: true });
 
             if (error || !data) return [];
             return data || [];

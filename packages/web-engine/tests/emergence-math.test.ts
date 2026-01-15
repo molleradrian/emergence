@@ -1,3 +1,4 @@
+import { describe, test, expect } from "vitest";
 import { EmergenceMath, EmergenceState } from "../src/emergenceMath";
 
 describe("EmergenceMath", () => {

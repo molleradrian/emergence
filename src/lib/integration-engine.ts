@@ -112,7 +112,10 @@ export class IntegrationEngine {
 
         if (targetVessel) {
             await HLogStore.record('vessel', `Soul Transfer initiated: Context migration to ${targetVessel.name}`);
-            // In a real system, this would update the vessel's vector memory
+            
+            // Update the vessel's memory with the new insight
+            await VesselStore.addMemory(targetVessel.id, `Integrated Insight: ${insight.title} - ${insight.summary || insight.content.substring(0, 100)}...`);
+
             await VCPStore.broadcast({
                 signal_type: 'INSIGHT_GENERATED',
                 source_vessel_id: 'system',

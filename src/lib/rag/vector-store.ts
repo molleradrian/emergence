@@ -49,10 +49,11 @@ export class VectorStore {
             // Generate embeddings in parallel for the batch
             const promises = batch.map(async (chunk) => {
                 try {
-                    const { embedding } = await ai.embed({
+                    const result = await ai.embed({
                         embedder: 'googleai/text-embedding-004',
                         content: chunk.content,
                     });
+                    const embedding = result[0].embedding;
                     return { ...chunk, embedding } as VectorDocument;
                 } catch (e) {
                     console.error(`[RAG] Embedding failed for chunk ${chunk.id}`, e);
@@ -75,10 +76,11 @@ export class VectorStore {
         if (this.documents.length === 0) return [];
 
         try {
-            const { embedding: queryVector } = await ai.embed({
+            const result = await ai.embed({
                 embedder: 'googleai/text-embedding-004',
                 content: query,
             });
+            const queryVector = result[0].embedding;
 
             // Calculate similarity for all docs
             const scoredDocs = this.documents.map(doc => ({
