@@ -10,6 +10,8 @@
 
 import { supabase } from './supabase';
 
+const IS_MOCK_MODE = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('uihcpanxkidhdbazwrxd');
+
 // ============================================
 // TYPE DEFINITIONS
 // ============================================
@@ -118,6 +120,7 @@ const MOCK_ARTIFACTS: Artifact[] = [
 
 export const VesselStore = {
     async getAll(): Promise<Vessel[]> {
+        if (IS_MOCK_MODE) return MOCK_VESSELS;
         try {
             const { data, error } = await supabase
                 .from('vessels')
@@ -259,6 +262,7 @@ export const VesselStore = {
 
 export const ArtifactStore = {
     async getAll(): Promise<Artifact[]> {
+        if (IS_MOCK_MODE) return MOCK_ARTIFACTS;
         try {
             const { data, error } = await supabase
                 .from('artifacts')
@@ -350,6 +354,7 @@ export const ArtifactStore = {
 
 export const ProjectStore = {
     async getAll(): Promise<Project[]> {
+        if (IS_MOCK_MODE) return [];
         try {
             const { data, error } = await supabase
                 .from('projects')
@@ -506,6 +511,7 @@ export const ProjectStore = {
 
 export const SimulationStore = {
     async getAllSimulations(): Promise<Simulation[]> {
+        if (IS_MOCK_MODE) return [];
         try {
             const { data, error } = await supabase
                 .from('simulations')
@@ -520,6 +526,7 @@ export const SimulationStore = {
     },
 
     async getAllSimulationRuns(): Promise<SimulationRun[]> {
+        if (IS_MOCK_MODE) return [];
         try {
             const { data, error } = await supabase
                 .from('simulation_runs')
@@ -594,6 +601,7 @@ export const SimulationStore = {
 
 export const HLogStore = {
     async getRecent(limit = 50): Promise<HLogEvent[]> {
+        if (IS_MOCK_MODE) return [];
         try {
             const { data, error } = await supabase
                 .from('hlog_events')
@@ -668,6 +676,7 @@ export const HLogStore = {
 
 export const VCPStore = {
     async getPending(): Promise<VCPSignal[]> {
+        if (IS_MOCK_MODE) return [];
         try {
             const { data, error } = await supabase
                 .from('vcp_signals')

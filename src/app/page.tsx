@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { VesselStore, ArtifactStore, HLogStore, MirrorStore, VCPStore, ProjectStore, SimulationStore, type Vessel, type Artifact, type HLogEvent, type VCPSignal, type Project, type Simulation, type SimulationRun } from '@/lib/nexus-store';
 import { IntegrationEngine } from '@/lib/integration-engine';
 import { templates } from '@/lib/codex-templates';
-import { Loader2, ShieldCheck, Activity } from 'lucide-react';
+import { Loader2, ShieldCheck, Activity, RefreshCcw } from 'lucide-react';
 
 // View Components
 import { NexusView } from '@/components/nexus/NexusView';
@@ -71,6 +71,18 @@ export default function NexusPage() {
     const [artifactToSave, setArtifactToSave] = useState<Partial<Artifact> | null>(null);
     const [showVesselAssignmentModal, setShowVesselAssignmentModal] = useState(false);
     const [directiveToAssign, setDirectiveToAssign] = useState<{ projectId: string, directiveId: string } | null>(null);
+    const [autoRefresh, setAutoRefresh] = useState(false);
+
+    // Auto-refresh logic
+    useEffect(() => {
+        let refreshInterval: NodeJS.Timeout;
+        if (autoRefresh) {
+            refreshInterval = setInterval(() => {
+                loadData();
+            }, 5000);
+        }
+        return () => clearInterval(refreshInterval);
+    }, [autoRefresh]);
 
     // Load initial data
     useEffect(() => {
@@ -268,7 +280,16 @@ export default function NexusPage() {
                         <h1 className="font-semibold text-xl tracking-wide neon-text-blue">AETHERIUM NEXUS</h1>
                         <span className="text-[var(--text-muted)] text-sm">v1.0 | OS/E</span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                        <button 
+                            onClick={() => setAutoRefresh(!autoRefresh)} 
+                            className={`flex items-center gap-2 text-xs px-3 py-1 rounded-full transition-all ${autoRefresh ? 'bg-[var(--neon-blue)] text-black font-bold animate-pulse' : 'bg-white/10 text-[var(--text-muted)] hover:text-white'}`}
+                            title={autoRefresh ? "Auto-Refresh Active (5s)" : "Enable Auto-Refresh"}
+                        >
+                            <RefreshCcw className={`h-3 w-3 ${autoRefresh ? 'animate-spin' : ''}`} />
+                            {autoRefresh ? 'LIVE' : 'SYNC'}
+                        </button>
+                        <div className="w-px h-4 bg-white/10 mx-2" />
                         <button onClick={() => setTuningForkSetting('focus')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'focus' ? 'bg-white text-black' : 'bg-white/10'}`}>Focus</button>
                         <button onClick={() => setTuningForkSetting('creative')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'creative' ? 'bg-white text-black' : 'bg-white/10'}`}>Creative</button>
                         <button onClick={() => setTuningForkSetting('calm')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'calm' ? 'bg-white text-black' : 'bg-white/10'}`}>Calm</button>
