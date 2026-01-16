@@ -26,8 +26,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 // Icons
 import {
   LayoutDashboard,
-  Rocket,
-  MessageSquare,
   Dices,
   Archive,
   History,
@@ -41,7 +39,7 @@ import { cn } from '@/lib/utils';
 
 export default function DashboardPage() {
   const { user, isUserLoading: authLoading } = useAuth();
-  const { projectName, tuningMode } = useAppState();
+  const { projectName } = useAppState();
 
   // View State
   const [activeTab, setActiveTab] = useState('architecture');

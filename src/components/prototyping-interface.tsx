@@ -13,7 +13,6 @@ import {
   Loader2,
   Cpu
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 interface GenerateCodeOutput {
@@ -24,11 +23,11 @@ interface GenerateCodeOutput {
 }
 
 export function PrototypingInterface() {
-  const { analysisReport, setAnalysisReport } = useAppState();
+  const { analysisReport } = useAppState();
   const [componentType, setComponentType] = useState<'frontend' | 'backend' | 'fullstack'>('frontend');
   const [requirements, setRequirements] = useState<string>('');
   const [technology, setTechnology] = useState<string>('');
-  const [existingCode, setExistingCode] = useState<string>('');
+  const [existingCode] = useState<string>('');
   const [generatedOutput, setGeneratedOutput] = useState<GenerateCodeOutput | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);

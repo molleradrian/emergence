@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Vessel, VCPSignal, VesselStore, VCPStore } from '@/lib/nexus-store';
-import { Activity, Radio, Zap, Users, ShieldAlert, Cpu } from 'lucide-react';
+import { Activity, Radio, Zap, Users, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface VesselsViewProps {

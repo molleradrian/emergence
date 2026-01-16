@@ -1,6 +1,5 @@
 'use client';
 
-import { IntegrationEngine } from '@/lib/integration-engine';
 import { CognitiveExpansionMetric } from './CognitiveExpansionMetric';
 
 interface MirrorViewProps {

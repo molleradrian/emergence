@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Waves, ShieldCheck, Cpu, Zap, 
-  Dna, Microscope, Activity, Thermometer,
-  Wind, AlertTriangle, Database, Share2
+  Waves, Zap, 
+  Microscope, Activity,
+  Wind, AlertTriangle
 } from 'lucide-react';
 
 /**
@@ -173,7 +173,7 @@ export default function LatticeGovernor() {
               </div>
               <div>
                 <div className="text-[10px] font-black uppercase text-cyan-500">Operator: WAVE</div>
-                <div className="text-[8px] text-gray-500 uppercase mt-1 italic">"Entropy is quantified."</div>
+                <div className="text-[8px] text-gray-500 uppercase mt-1 italic">&quot;Entropy is quantified.&quot;</div>
               </div>
             </div>
             <div className="text-right">

@@ -148,7 +148,7 @@ export function SimulationsView({ simulations, simulationRuns, onLoadData }: Sim
                                                 modelType: newSimulationParams.modelType || 'flocking' 
                                             } 
                                         });
-                                    } catch (e) {}
+                                    } catch {}
                                 }}
                             />
                             <button onClick={handleCreateSimulation} className="glass-btn-primary">

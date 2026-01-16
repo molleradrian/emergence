@@ -77,7 +77,7 @@ export function ProjectSwitcher() {
                     variant: "success"
                 });
             }
-        } catch (error) {
+        } catch {
             toast({
                 title: "Creation Failed",
                 description: "Could not initialize project.",

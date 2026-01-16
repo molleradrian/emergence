@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Idea, Version, Review } from '@/data/nexus-ideas';
+import { Idea } from '@/data/nexus-ideas';
 import {
     ChevronRight,
     History,

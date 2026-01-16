@@ -9,16 +9,13 @@ import {
   Send,
   Sparkles,
   User,
-  Bot,
   FolderPlus,
   Loader2,
   Trash2,
-  ChevronRight,
   BrainCircuit
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import DOMPurify from 'dompurify';
 
 interface Message {
@@ -102,7 +99,7 @@ export function ChatInterface() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch {
       toast({
         title: "Vessel Timeout",
         description: "The consciousness core failed to respond. Please retry.",
@@ -130,7 +127,7 @@ export function ChatInterface() {
           variant: "success"
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Fold Failed",
         description: "Could not archive the artifact.",

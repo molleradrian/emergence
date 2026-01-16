@@ -1,11 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Heart,
   Dices,
@@ -35,16 +32,9 @@ const DICE_SETUP = [
   { face: 'axe', bordered: true }
 ];
 
-const GOD_FAVORS = {
-  thor_strike: { id: "thor_strike", name: "Thor's Strike", desc: "Direct damage." },
-  idun_rejuvenation: { id: "idun_rejuvenation", name: "Idun's Rejuvenation", desc: "Heal." },
-  vidar_might: { id: "vidar_might", name: "Vidar's Might", desc: "Destroy Helmets." },
-};
-
 export const OrlogGame: React.FC = () => {
   const [gameState, setGameState] = useState<any>(null);
   const [logMessages, setLogMessages] = useState<string[]>([]);
-  const { toast } = useToast();
 
   const initGame = () => {
     const newGameState = {

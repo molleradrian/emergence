@@ -8,10 +8,8 @@ import {
     Upload,
     File,
     X,
-    CheckCircle2,
     Loader2,
     FileText,
-    AlertCircle,
     Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -69,7 +67,7 @@ export function FileUpload() {
                 variant: "success"
             });
             setFiles([]);
-        } catch (error) {
+        } catch {
             toast({
                 title: "Ingestion Failed",
                 description: "An error occurred during file processing.",

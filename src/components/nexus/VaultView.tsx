@@ -67,7 +67,6 @@ export function VaultView({ artifacts, onLoadData }: VaultViewProps) {
         const tags = ['tagA', 'tagB', 'tagC', 'tagD', 'tagE', 'tagF'];
 
         for (let i = 0; i < 50; i++) {
-            const date = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
             dummyArtifacts.push({
                 title: `Dummy Artifact ${i}`,
                 content: `This is the content of dummy artifact number ${i}. It contains some random text to test the search functionality.`,

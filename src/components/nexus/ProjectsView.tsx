@@ -1,6 +1,6 @@
 import { Project, Vessel, ProjectStore, Directive } from '@/lib/nexus-store';
 import { ProjectGraph } from '@/components/project-graph';
-import { Play, PlayCircle, Loader2, ScrollText } from 'lucide-react';
+import { PlayCircle, Loader2, ScrollText } from 'lucide-react';
 import { ScenarioRunner } from '@/lib/scenario-runner';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';

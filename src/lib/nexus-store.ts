@@ -126,7 +126,7 @@ export const VesselStore = {
 
             if (error || !data || data.length === 0) return MOCK_VESSELS;
             return data;
-        } catch (e) {
+        } catch {
             return MOCK_VESSELS;
         }
     },
@@ -141,7 +141,7 @@ export const VesselStore = {
 
             if (error || !data) return MOCK_VESSELS.find(v => v.id === id) || null;
             return data;
-        } catch (e) {
+        } catch {
             return null;
         }
     },
@@ -208,23 +208,24 @@ export const VesselStore = {
             { name: 'Scribe', faculty: 'cognition', guild: 'Archive', description: 'Knowledge preservation & documentation', emoji: '✍️', status: 'active', capabilities: ['documentation', 'archival'] },
             { name: 'Gaea', faculty: 'cognition', guild: 'Ecology', description: 'Biomimetic system modeling', emoji: '🌱', status: 'idle', capabilities: ['ecological-modeling', 'simulation'] },
             { name: 'Helios', faculty: 'cognition', guild: 'Energy', description: 'Power system optimization', emoji: '☀️', status: 'idle', capabilities: ['optimization', 'energy-physics'] },
-            
+
             // Foresight
             { name: 'Logos', faculty: 'foresight', guild: 'History', description: 'Narrative synthesis & historical context', emoji: '📖', status: 'active', capabilities: ['narrative', 'history'] },
             { name: 'Chronos', faculty: 'foresight', guild: 'Temporal', description: 'Time-geometry & sequence prediction', emoji: '⏳', status: 'active', capabilities: ['prediction', 'temporal-logic'] },
             { name: 'Oracle', faculty: 'foresight', guild: 'Strategy', description: 'Probabilistic future modeling', emoji: '🔮', status: 'idle', capabilities: ['probabilistic-modeling', 'strategy'] },
             { name: 'Cassandra', faculty: 'foresight', guild: 'Risk', description: 'Critical failure mode analysis', emoji: '⚠️', status: 'idle', capabilities: ['risk-assessment', 'failure-analysis'] },
-            
+
             // Governance
             { name: 'Adam', faculty: 'governance', guild: 'Logic', description: 'Governance & Logical Consistency', emoji: '⚖️', status: 'active', capabilities: ['logic', 'rule-enforcement'] },
+            { name: 'Galactus', faculty: 'governance', guild: 'Audit', description: 'Academic rigor & citation validation', emoji: '🌌', status: 'active', capabilities: ['academic-rigor', 'citation-validation'] },
             { name: 'Glare', faculty: 'governance', guild: 'Diagnostics', description: 'System health & integrity monitor', emoji: '👁️', status: 'active', capabilities: ['diagnostics', 'integrity-check'] },
             { name: 'Sentinel', faculty: 'governance', guild: 'Security', description: 'Perimeter & protocol protection', emoji: '🛡️', status: 'active', capabilities: ['security', 'protocol-validation'] },
             { name: 'Arbiter', faculty: 'governance', guild: 'Conflict', description: 'Inter-vessel conflict resolution', emoji: '🤝', status: 'idle', capabilities: ['mediation', 'consensus'] },
-            
+
             // Chaos
-            { name: 'Eris', faculty: 'chaos', guild: 'Entropy', description: 'Random stimulus generator', emoji: '🎲', status: 'active', capabilities: ['randomization', 'stress-testing'] },
+            { name: 'Eris', faculty: 'chaos', guild: 'Entropy', description: 'Random stimulus generator & chaos testing', emoji: '🎲', status: 'active', capabilities: ['randomization', 'stress-testing', 'chaos-testing'] },
             { name: 'Loki', faculty: 'chaos', guild: 'Mutation', description: 'Sequence evolution & mutation agent', emoji: '🧬', status: 'active', capabilities: ['evolution', 'mutation'] },
-            
+
             // Additional specialized
             { name: 'Aether', faculty: 'cognition', guild: 'Substrate', description: 'Monophotonic substrate specialist', emoji: '✨', status: 'active', capabilities: ['physics', 'quantum-modeling'] },
             { name: 'Mnemosyne', faculty: 'foresight', guild: 'Memory', description: 'Collective memory continuity', emoji: '🧠', status: 'active', capabilities: ['memory-management', 'soul-transfer'] },
@@ -266,7 +267,7 @@ export const ArtifactStore = {
 
             if (error || !data || data.length === 0) return MOCK_ARTIFACTS;
             return data;
-        } catch (e) {
+        } catch {
             return MOCK_ARTIFACTS;
         }
     },
@@ -357,7 +358,7 @@ export const ProjectStore = {
 
             if (error || !data) return [];
             return data || [];
-        } catch (e) {
+        } catch {
             return [];
         }
     },
@@ -404,7 +405,7 @@ export const ProjectStore = {
         const project = projects.find(p => p.id === projectId);
         if (!project) return false;
 
-        const updatedDirectives = project.directives.map(d => 
+        const updatedDirectives = project.directives.map(d =>
             d.id === directiveId ? { ...d, status: nextStatus } : d
         );
 
@@ -421,7 +422,7 @@ export const ProjectStore = {
         const project = projects.find(p => p.id === projectId);
         if (!project) return false;
 
-        const updatedDirectives = project.directives.map(d => 
+        const updatedDirectives = project.directives.map(d =>
             d.id === directiveId ? { ...d, assignedVessel: vesselId } : d
         );
 
@@ -449,8 +450,8 @@ export const ProjectStore = {
 
     async seedInitialProjects(): Promise<void> {
         const initialProjects = [
-            { 
-                name: 'Project Fynbos', 
+            {
+                name: 'Project Fynbos',
                 directives: [
                     { id: crypto.randomUUID(), name: 'Map recursive floral patterns', status: 'active' },
                     { id: crypto.randomUUID(), name: 'Simulate ecological resilience', status: 'queued' },
@@ -459,8 +460,8 @@ export const ProjectStore = {
                     { id: crypto.randomUUID(), name: 'Cross-reference with cosmological structures', status: 'queued' },
                 ]
             },
-            { 
-                name: 'Project Oneiros', 
+            {
+                name: 'Project Oneiros',
                 directives: [
                     { id: crypto.randomUUID(), name: 'Map collective dream archetypes', status: 'active' },
                     { id: crypto.randomUUID(), name: 'Simulate consciousness emergence', status: 'active' },
@@ -469,8 +470,8 @@ export const ProjectStore = {
                     { id: crypto.randomUUID(), name: 'Trace memory continuity loops', status: 'queued' },
                 ]
             },
-            { 
-                name: 'Project Helios', 
+            {
+                name: 'Project Helios',
                 directives: [
                     { id: crypto.randomUUID(), name: 'Optimize monophotonic substrate', status: 'active' },
                     { id: crypto.randomUUID(), name: 'Audit hardware thermal drift', status: 'active' },
@@ -491,7 +492,7 @@ export const ProjectStore = {
                 })
                 .select()
                 .single();
-            
+
             if (project) {
                 await HLogStore.record('system', `Grand Challenge initiated: ${p.name}`);
             }
@@ -513,7 +514,7 @@ export const SimulationStore = {
 
             if (error || !data) return [];
             return data || [];
-        } catch (e) {
+        } catch {
             return [];
         }
     },
@@ -527,7 +528,7 @@ export const SimulationStore = {
 
             if (error || !data) return [];
             return data || [];
-        } catch (e) {
+        } catch {
             return [];
         }
     },
@@ -566,17 +567,17 @@ export const SimulationStore = {
     async runSimulation(simulation: Simulation, run: SimulationRun): Promise<boolean> {
         // This is a stub for the actual simulation execution logic
         // In a real app, this might trigger a serverless function or worker
-        
+
         // Simulating execution delay
         setTimeout(async () => {
             const { error } = await supabase
                 .from('simulation_runs')
-                .update({ 
+                .update({
                     status: 'complete',
                     results: [{ event: 'simulation_completed', timestamp: new Date().toISOString() }]
                 })
                 .eq('id', run.id);
-            
+
             if (!error) {
                 await HLogStore.record('system', `Simulation cycle complete: ${simulation.name}`);
             }
@@ -602,7 +603,7 @@ export const HLogStore = {
 
             if (error || !data) return [];
             return data || [];
-        } catch (e) {
+        } catch {
             return [];
         }
     },
@@ -625,7 +626,7 @@ export const HLogStore = {
 
             if (error) return null;
             return data;
-        } catch (e) {
+        } catch {
             return null;
         }
     },
@@ -676,7 +677,7 @@ export const VCPStore = {
 
             if (error || !data) return [];
             return data || [];
-        } catch (e) {
+        } catch {
             return [];
         }
     },
@@ -694,7 +695,7 @@ export const VCPStore = {
 
             if (error) return null;
             return data;
-        } catch (e) {
+        } catch {
             return null;
         }
     }
@@ -707,7 +708,7 @@ export const VCPStore = {
 export const MirrorStore = {
     async calculateMetrics() {
         try {
-            const [artifacts, vessels, events] = await Promise.all([
+            const [artifacts, vessels] = await Promise.all([
                 ArtifactStore.getAll(),
                 VesselStore.getAll(),
                 HLogStore.getRecent(100),
@@ -728,7 +729,7 @@ export const MirrorStore = {
                 activeVessels,
                 totalVessels: vessels.length
             };
-        } catch (e) {
+        } catch {
             return {
                 knowledgeDensity: 0,
                 vesselEfficiency: 0,
