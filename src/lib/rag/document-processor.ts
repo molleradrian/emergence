@@ -17,8 +17,7 @@ export class DocumentProcessor {
         this.docsPath = docsPath;
     }
 
-    async processAll(): Promise<DocumentChunk[]> {
-        const chunks: DocumentChunk[] = [];
+    async *processFilesGenerator(): AsyncGenerator<DocumentChunk[]> {
         const files = this.getFilesRecursively(this.docsPath);
 
         console.log(`[RAG] Found ${files.length} documents in ${this.docsPath}`);
@@ -28,13 +27,21 @@ export class DocumentProcessor {
                 const content = await this.extractText(file);
                 if (content.trim().length > 0) {
                     const fileChunks = this.chunkText(content, 1000, file); // 1000 char chunks
-                    chunks.push(...fileChunks);
+                    if (fileChunks.length > 0) {
+                        yield fileChunks;
+                    }
                 }
             } catch (error) {
                 console.error(`[RAG] Failed to process ${file}:`, error);
             }
         }
+    }
 
+    async processAll(): Promise<DocumentChunk[]> {
+        const chunks: DocumentChunk[] = [];
+        for await (const fileChunks of this.processFilesGenerator()) {
+            chunks.push(...fileChunks);
+        }
         return chunks;
     }
 

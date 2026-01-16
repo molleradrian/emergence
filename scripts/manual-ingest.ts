@@ -12,31 +12,25 @@ async function main() {
         path.resolve(process.cwd(), 'User Input')
     ];
     
-    const allChunks = [];
-
-    for (const dirPath of searchPaths) {
-        if (dirPath.includes('docs')) {
-             // In docs, we only want to process the Knowledge subfolder and maybe some root files
-             // The DocumentProcessor handles recursive search, but let's be specific if needed.
-             // Actually, processAll is fine.
-        }
-        console.log(`[RAG] Scanning directory: ${dirPath}`);
-        const processor = new DocumentProcessor(dirPath);
-        const chunks = await processor.processAll();
-        allChunks.push(...chunks);
-    }
-    
-    if (allChunks.length === 0) {
-        console.log("[RAG] No documents found to ingest.");
-        return;
-    }
-
-    console.log(`[RAG] Found ${allChunks.length} total chunks. Updating vector store...`);
     const store = new VectorStore();
     store.clear(); 
-    await store.addDocuments(allChunks);
     
-    console.log(`[RAG] Successfully ingested ${allChunks.length} chunks into the vector store.`);
+    let totalChunks = 0;
+
+    for (const dirPath of searchPaths) {
+        console.log(`[RAG] Scanning directory: ${dirPath}`);
+        const processor = new DocumentProcessor(dirPath);
+        
+        for await (const fileChunks of processor.processFilesGenerator()) {
+            if (fileChunks.length > 0) {
+                console.log(`[RAG] Ingesting ${fileChunks.length} chunks from ${fileChunks[0].source}...`);
+                await store.addDocuments(fileChunks);
+                totalChunks += fileChunks.length;
+            }
+        }
+    }
+    
+    console.log(`[RAG] Successfully ingested ${totalChunks} chunks into the vector store.`);
 }
 
 main().catch((err) => {
