@@ -16,7 +16,7 @@ import { ProjectSwitcher } from '@/components/project-switcher';
 import { FileUpload } from '@/components/file-upload';
 import { PrototypingInterface } from '@/components/prototyping-interface';
 import { ChatInterface } from '@/components/chat-interface';
-import { OrlogGame } from '@/components/OrlogGame';
+// import { OrlogGame } from '@/components/OrlogGame';
 import { IdeaListView } from '@/components/IdeaListView';
 import EvolutionTracker from '@/components/EvolutionTracker';
 import { Button } from '@/components/ui/button';
@@ -158,7 +158,8 @@ export default function DashboardPage() {
                 </TabsContent>
                 <TabsContent value="gaming" className="mt-0">
                   <div className="glass-panel p-6 min-h-[600px]">
-                    <OrlogGame />
+                    {/* <OrlogGame /> */}
+                    <div className="flex items-center justify-center h-full text-[var(--text-muted)] uppercase tracking-widest text-xs">Component Offline</div>
                   </div>
                 </TabsContent>
               </Tabs>

@@ -1,44 +1,23 @@
 import { useState, useEffect } from 'react';
-// import { supabase } from '@/lib/supabase';
-import { User } from '@supabase/supabase-js';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, User, signInAnonymously } from 'firebase/auth';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
 
   useEffect(() => {
-    // BYPASS: Local Sovereign Mode
-    const mockUser: User = {
-      id: "sovereign-001",
-      email: "sovereign@nexus.local",
-      aud: "authenticated",
-      role: "authenticated",
-      app_metadata: {},
-      user_metadata: {},
-      created_at: new Date().toISOString(),
-      confirmed_at: new Date().toISOString(),
-      last_sign_in_at: new Date().toISOString(),
-      phone: "",
-      factors: []
-    };
-
-    setTimeout(() => {
-      console.log("useAuth: Setting user and clearing loading state");
-      setUser(mockUser);
-      setIsUserLoading(false);
-    }, 100); // Fake loading for effect
-
-    /* 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (!firebaseUser) {
+        // Auto-sign in anonymously if no user exists, as per Lattice Manifest
+        signInAnonymously(auth).catch(err => console.error("Auth Failure:", err));
+      }
+      setUser(firebaseUser);
       setIsUserLoading(false);
     });
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-    */
+    return () => unsubscribe();
   }, []);
 
-  return { user, isUserLoading, auth: {} as any }; // Mock auth object
+  return { user, isUserLoading, auth };
 }

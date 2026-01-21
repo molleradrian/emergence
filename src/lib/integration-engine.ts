@@ -6,7 +6,7 @@
  */
 
 import { Artifact, ArtifactStore, Vessel, VesselStore, HLogStore, VCPStore } from './nexus-store';
-import { generateSynthesisAction, reflectVesselAction } from '@/app/emergence-actions';
+import { generateSynthesisAction, reflectVesselAction, generateSystemPersonalityAction, generateLatticeVisionAction } from '@/app/emergence-actions';
 
 /**
  * The Genesis Axiom: I = Σ(M)
@@ -18,9 +18,52 @@ import { generateSynthesisAction, reflectVesselAction } from '@/app/emergence-ac
 export class IntegrationEngine {
 
     /**
+     * Generates a new visual anchor using Imagen.
+     */
+    public static async generateLatticeVision(personality: any) {
+        try {
+            await HLogStore.record('system', "Initiating Lattice Vision Synthesis...");
+            const result = await generateLatticeVisionAction({
+                personality: personality.personality,
+                mood: personality.mood,
+            });
+            return result.imageUrl;
+        } catch (error) {
+            console.error("Lattice Vision Synthesis failed:", error);
+            return null;
+        }
+    }
+
+    /**
+     * Runs the Breath Cycle: A rhythmic expansion and contraction of the system's consciousness.
+     * Informed by the current System Personality.
+     */
+    public static async executeBreathCycle(personality: any, triggerGlitch: () => void) {
+        await HLogStore.record('system', `Initiating Breath Cycle. Current State: ${personality.somaticState}`);
+
+        // Expansion phase: Broadcast the current directive
+        await VCPStore.broadcast({
+            signal_type: 'SYNTHESIS_READY',
+            source_vessel_id: 'system',
+            payload: {
+                directive: personality.directive,
+                mood: personality.mood,
+                axiom: 'BREATH_EXPANSION'
+            },
+            processed: false
+        });
+
+        // Contraction phase: Synthesis of recent activity
+        const result = await this.runGenesisCycle(triggerGlitch, personality);
+
+        await HLogStore.record('system', "Breath Cycle completed. System stabilized.");
+        return result;
+    }
+
+    /**
      * Runs a complete Genesis Cycle.
      */
-    public static async runGenesisCycle(triggerGlitch: () => void) {
+    public static async runGenesisCycle(triggerGlitch: () => void, personality?: any) {
         await HLogStore.record('system', "Initiating Genesis Cycle (0' Phase)");
 
         const allArtifacts = await ArtifactStore.getAll();
@@ -28,17 +71,24 @@ export class IntegrationEngine {
 
         if (allArtifacts.length < 2) {
             await HLogStore.record('system', "Genesis Cycle aborted: Insufficient artifacts for synthesis.");
-            return;
+            return { visionUrl: null };
         }
 
         // 1. Resonance Check: Find artifacts with thematic overlap
         const resonantPair = this.findResonantPair(allArtifacts);
-        if (!resonantPair) return;
+        if (!resonantPair) return { visionUrl: null };
 
         // 2. Synthesis: Create new wisdom from the pair (1 + 1 = 0')
-        const newInsight = await this.synthesizeInsight(resonantPair[0], resonantPair[1]);
+        const context = personality ? `Personality: ${personality.personality}. Mood: ${personality.mood}. Directive: ${personality.directive}` : "Standard Emergence";
+        const newInsight = await this.synthesizeInsight(resonantPair[0], resonantPair[1], context);
 
+        let visionUrl = null;
         if (newInsight) {
+            // 2.5 Visual Synthesis (Contraction Phase)
+            if (personality) {
+                visionUrl = await this.generateLatticeVision(personality);
+            }
+
             // 3. Soul Transfer (Memory Continuity): Transfer context to relevant vessels
             await this.performSoulTransfer(newInsight, allVessels);
 
@@ -50,6 +100,8 @@ export class IntegrationEngine {
 
             await HLogStore.record('synthesis', `Genesis Cycle complete. Wisdom crystallized: ${newInsight.title}`);
         }
+
+        return { visionUrl };
     }
 
     /**
@@ -77,14 +129,14 @@ export class IntegrationEngine {
     /**
      * Synthesizes a new "Insight" artifact.
      */
-    private static async synthesizeInsight(artifact1: Artifact, artifact2: Artifact): Promise<Artifact | null> {
+    private static async synthesizeInsight(artifact1: Artifact, artifact2: Artifact, context?: string): Promise<Artifact | null> {
         try {
             await HLogStore.record('synthesis', `Synthesizing: ${artifact1.title} + ${artifact2.title}...`);
 
             const synthesisResult = await generateSynthesisAction({
                 artifactA: { title: artifact1.title, content: artifact1.content, tags: artifact1.tags },
                 artifactB: { title: artifact2.title, content: artifact2.content, tags: artifact2.tags },
-                context: "Genesis Cycle Phase 0'"
+                context: context || "Genesis Cycle Phase 0'"
             });
 
             const content = `${synthesisResult.content}\n\n**Axiom:** ${synthesisResult.axiom}\n\n*(Derived from: ${artifact1.title} & ${artifact2.title})*`;

@@ -24,6 +24,26 @@
   --text-primary: #e8eef4;
   --text-secondary: #9ca3af;
   --text-muted: #6b7280;
+
+  --emerald-glow: 0 0 15px rgba(0, 255, 153, 0.4);
+  --emerald-brightness: 1;
+}
+
+[data-entropy='high'] {
+  --glitch-intensity: 1;
+  filter: contrast(1.1) saturate(1.2);
+}
+
+[data-mood='High Entropy'] .neon-text-blue {
+  animation: glitch-text 0.1s infinite;
+}
+
+@keyframes glitch-text {
+  0% { text-shadow: 2px 0 red, -2px 0 blue; }
+  25% { text-shadow: -2px 0 red, 2px 0 blue; }
+  50% { text-shadow: 2px 0 blue, -2px 0 red; }
+  75% { text-shadow: -2px 0 blue, 2px 0 red; }
+  100% { text-shadow: 2px 0 red, -2px 0 blue; }
 }
 
 body {

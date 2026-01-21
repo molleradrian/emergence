@@ -1,62 +1,43 @@
 import { config } from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 
 config({ path: '.env.local' });
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+};
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('❌ Missing Supabase environment variables in .env.local');
-    process.exit(1);
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-const coreVessels = [
-    { name: 'Daystrom', faculty: 'cognition', guild: 'Research', description: 'Lead Researcher & Pattern Analyst', emoji: '🔬', status: 'active', capabilities: ['analysis', 'pattern-recognition'] },
-    { name: 'Weaver', faculty: 'cognition', guild: 'Synthesis', description: 'Cross-domain thread weaver', emoji: '🕸️', status: 'active', capabilities: ['synthesis', 'connection'] },
-    { name: 'Scribe', faculty: 'cognition', guild: 'Archive', description: 'Knowledge preservation & documentation', emoji: '✍️', status: 'active', capabilities: ['documentation', 'archival'] },
-    { name: 'Adam', faculty: 'governance', guild: 'Logic', description: 'Governance & Logical Consistency', emoji: '⚖️', status: 'active', capabilities: ['logic', 'rule-enforcement'] },
-    { name: 'Galactus', faculty: 'governance', guild: 'Audit', description: 'Academic rigor & citation validation', emoji: '🌌', status: 'active', capabilities: ['academic-rigor', 'citation-validation'] },
-    { name: 'Glare', faculty: 'governance', guild: 'Diagnostics', description: 'System health & integrity monitor', emoji: '👁️', status: 'active', capabilities: ['diagnostics', 'integrity-check'] },
-    { name: 'Eris', faculty: 'chaos', guild: 'Entropy', description: 'Random stimulus generator & chaos testing', emoji: '🎲', status: 'active', capabilities: ['randomization', 'stress-testing', 'chaos-testing'] },
-    { name: 'Chronos', faculty: 'foresight', guild: 'Temporal', description: 'Time-geometry & sequence prediction', emoji: '⏳', status: 'active', capabilities: ['prediction', 'temporal-logic'] },
-];
-
-const initialProjects = [
-    { name: 'Project Fynbos', directives: [{ id: '1', name: 'Map recursive floral patterns', status: 'active' }] },
-    { name: 'Project Oneiros', directives: [{ id: '2', name: 'Map collective dream archetypes', status: 'active' }] },
-    { name: 'Project Helios', directives: [{ id: '3', name: 'Optimize monophotonic substrate', status: 'active' }] }
-];
+const APP_ID = 'genesis-node-001';
 
 async function seed() {
-    console.log('🚀 Starting Standalone Aetherium Seeding Ceremony...');
+  console.log('🌱 Seeding Firestore...');
 
-    console.log('\n--- Seeding Vessels ---');
-    for (const v of coreVessels) {
-        console.log(` Instantiating: ${v.name}`);
-        await supabase.from('vessels').insert({
-            ...v,
-            memory: [],
-            created_at: new Date().toISOString(),
-            last_active: new Date().toISOString(),
-        });
-    }
+  const vessels = [
+    { name: 'Daystrom', faculty: 'cognition', guild: 'Research', description: 'Lead Researcher', emoji: '🔬', status: 'active', capabilities: ['analysis'], memory: [] },
+    { name: 'Logos', faculty: 'foresight', guild: 'History', description: 'Narrative Synthesis', emoji: '📖', status: 'active', capabilities: ['narrative'], memory: [] },
+    { name: 'Adam', faculty: 'governance', guild: 'Logic', description: 'Governance & Logic', emoji: '⚖️', status: 'active', capabilities: ['logic'], memory: [] }
+  ];
 
-    console.log('\n--- Seeding Projects ---');
-    for (const p of initialProjects) {
-        console.log(` Initializing: ${p.name}`);
-        await supabase.from('projects').insert({
-            ...p,
-            created_at: new Date().toISOString(),
-        });
-    }
+  for (const v of vessels) {
+    const id = v.name.toLowerCase();
+    await setDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'vessels', id), {
+      ...v,
+      created_at: new Date().toISOString(),
+      last_active: new Date().toISOString()
+    });
+    console.log(`  - Vessel seeded: ${v.name}`);
+  }
 
-    console.log('\n✨ Seeding Ceremony complete.');
+  console.log('✅ Seeding complete.');
 }
 
-seed().catch(err => {
-    console.error('❌ Seeding failed:', err);
-    process.exit(1);
-});
+seed().catch(console.error);

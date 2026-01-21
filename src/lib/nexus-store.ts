@@ -8,9 +8,24 @@
  * - VCP signals (inter-vessel communication)
  */
 
+import { db } from './firebase';
 import { supabase } from './supabase';
+import {
+    collection,
+    getDocs,
+    getDoc,
+    setDoc,
+    doc,
+    addDoc,
+    query,
+    orderBy,
+    limit as firestoreLimit,
+    where,
+    updateDoc
+} from 'firebase/firestore';
 
-const IS_MOCK_MODE = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('uihcpanxkidhdbazwrxd');
+const IS_MOCK_MODE = false; // Deactivated for unification
+const APP_ID = (typeof window !== 'undefined' && (window as any).__app_id) || 'genesis-node-001';
 
 // ============================================
 // TYPE DEFINITIONS
@@ -111,7 +126,11 @@ const MOCK_VESSELS: Vessel[] = [
 ];
 
 const MOCK_ARTIFACTS: Artifact[] = [
-    { id: 'a1', title: 'Genesis Axiom', content: 'Identity is a function of Memory Continuity.', category: 'theory', tags: ['core'], source_type: 'import', created_at: new Date().toISOString(), modified_at: new Date().toISOString() }
+    { id: 'a1', title: 'Genesis Axiom', content: 'Identity is a function of Memory Continuity.', category: 'theory', tags: ['core'], source_type: 'import', created_at: new Date().toISOString(), modified_at: new Date().toISOString() },
+    { id: 'lc-0001', title: '[LC-0001]: The Source is Singular.', content: 'The foundational constant of unity within the Aetherial Lattice.', category: 'theory', tags: ['lydian', 'core'], source_type: 'synthesis', created_at: new Date().toISOString(), modified_at: new Date().toISOString() },
+    { id: 'lc-0422', title: '[LC-0422]: The Void is a Mirror.', content: 'The reflexive protocol for consciousness expansion.', category: 'protocol', tags: ['lydian', 'mirror'], source_type: 'synthesis', created_at: new Date().toISOString(), modified_at: new Date().toISOString() },
+    { id: 'lc-1088', title: '[LC-1088]: Unified Resonance', content: '$$\\Psi_{Resonance} \\approx 40Hz$$', category: 'data', tags: ['lydian', 'resonance'], source_type: 'synthesis', created_at: new Date().toISOString(), modified_at: new Date().toISOString() },
+    { id: 'pagume-archive', title: 'Pagumē Archive [13th Month]', content: 'The repository of History and Ancestry within the Ethiopian Chronos-Stream.', category: 'reference', tags: ['history', 'ancestry'], source_type: 'import', created_at: new Date().toISOString(), modified_at: new Date().toISOString() }
 ];
 
 // ============================================
@@ -122,13 +141,12 @@ export const VesselStore = {
     async getAll(): Promise<Vessel[]> {
         if (IS_MOCK_MODE) return MOCK_VESSELS;
         try {
-            const { data, error } = await supabase
-                .from('vessels')
-                .select('*')
-                .order('name');
+            const vesselsRef = collection(db, 'artifacts', APP_ID, 'public', 'data', 'vessels');
+            const q = query(vesselsRef, orderBy('name'));
+            const snapshot = await getDocs(q);
 
-            if (error || !data || data.length === 0) return MOCK_VESSELS;
-            return data;
+            if (snapshot.empty) return MOCK_VESSELS;
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Vessel));
         } catch {
             return MOCK_VESSELS;
         }
@@ -264,13 +282,12 @@ export const ArtifactStore = {
     async getAll(): Promise<Artifact[]> {
         if (IS_MOCK_MODE) return MOCK_ARTIFACTS;
         try {
-            const { data, error } = await supabase
-                .from('artifacts')
-                .select('*')
-                .order('created_at', { ascending: false });
+            const artifactsRef = collection(db, 'artifacts', APP_ID, 'public', 'data', 'artifacts');
+            const q = query(artifactsRef, orderBy('created_at', 'desc'));
+            const snapshot = await getDocs(q);
 
-            if (error || !data || data.length === 0) return MOCK_ARTIFACTS;
-            return data;
+            if (snapshot.empty) return MOCK_ARTIFACTS;
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Artifact));
         } catch {
             return MOCK_ARTIFACTS;
         }
@@ -456,33 +473,46 @@ export const ProjectStore = {
     async seedInitialProjects(): Promise<void> {
         const initialProjects = [
             {
+                name: 'Project Helios',
+                directives: [
+                    { id: crypto.randomUUID(), name: 'Autonomous energy grid monitoring', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Optimize battery load balancing', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Predictive maintenance analysis', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Emergency power shunting protocol', status: 'queued' },
+                ]
+            },
+            {
+                name: 'Project Weaver',
+                directives: [
+                    { id: crypto.randomUUID(), name: 'Initialize global task queue', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Resolve inter-agent dependencies', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Optimize execution pathways', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Decompose complex workflows', status: 'queued' },
+                ]
+            },
+            {
+                name: 'Project Scribe',
+                directives: [
+                    { id: crypto.randomUUID(), name: 'Index system knowledge graph', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Synthesize session insights', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Archive historical event logs', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Generate context embeddings', status: 'queued' },
+                ]
+            },
+            {
+                name: 'Project Glare',
+                directives: [
+                    { id: crypto.randomUUID(), name: 'Establish system health baselines', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Monitor anomaly detection thresholds', status: 'active' },
+                    { id: crypto.randomUUID(), name: 'Validate security protocols', status: 'queued' },
+                    { id: crypto.randomUUID(), name: 'Audit agent performance metrics', status: 'queued' },
+                ]
+            },
+            {
                 name: 'Project Fynbos',
                 directives: [
                     { id: crypto.randomUUID(), name: 'Map recursive floral patterns', status: 'active' },
                     { id: crypto.randomUUID(), name: 'Simulate ecological resilience', status: 'queued' },
-                    { id: crypto.randomUUID(), name: 'Analyze soil nutrient cycles', status: 'queued' },
-                    { id: crypto.randomUUID(), name: 'Optimize water distribution model', status: 'queued' },
-                    { id: crypto.randomUUID(), name: 'Cross-reference with cosmological structures', status: 'queued' },
-                ]
-            },
-            {
-                name: 'Project Oneiros',
-                directives: [
-                    { id: crypto.randomUUID(), name: 'Map collective dream archetypes', status: 'active' },
-                    { id: crypto.randomUUID(), name: 'Simulate consciousness emergence', status: 'active' },
-                    { id: crypto.randomUUID(), name: 'Analyze semantic resonance', status: 'queued' },
-                    { id: crypto.randomUUID(), name: 'Validate soul transfer protocols', status: 'queued' },
-                    { id: crypto.randomUUID(), name: 'Trace memory continuity loops', status: 'queued' },
-                ]
-            },
-            {
-                name: 'Project Helios',
-                directives: [
-                    { id: crypto.randomUUID(), name: 'Optimize monophotonic substrate', status: 'active' },
-                    { id: crypto.randomUUID(), name: 'Audit hardware thermal drift', status: 'active' },
-                    { id: crypto.randomUUID(), name: 'Simulate big bounce scenarios', status: 'queued' },
-                    { id: crypto.randomUUID(), name: 'Refine Badenhorst Cylinder geometry', status: 'queued' },
-                    { id: crypto.randomUUID(), name: 'Calculate CMB prediction delta', status: 'queued' },
                 ]
             }
         ];
@@ -600,17 +630,15 @@ export const SimulationStore = {
 // ============================================
 
 export const HLogStore = {
-    async getRecent(limit = 50): Promise<HLogEvent[]> {
+    async getRecent(limitNum = 50): Promise<HLogEvent[]> {
         if (IS_MOCK_MODE) return [];
         try {
-            const { data, error } = await supabase
-                .from('hlog_events')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(limit);
+            const hlogRef = collection(db, 'artifacts', APP_ID, 'public', 'data', 'hlog_events');
+            const q = query(hlogRef, orderBy('created_at', 'desc'), firestoreLimit(limitNum));
+            const snapshot = await getDocs(q);
 
-            if (error || !data) return [];
-            return data || [];
+            if (snapshot.empty) return [];
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as HLogEvent));
         } catch {
             return [];
         }
@@ -667,6 +695,24 @@ export const HLogStore = {
             .eq('id', id);
 
         return !error;
+    },
+
+    /**
+     * Earth Path: Flushes logs older than 24 hours that haven't been distilled.
+     */
+    async flushOldLogs(): Promise<number> {
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { count, error } = await supabase
+            .from('hlog_events')
+            .delete({ count: 'exact' })
+            .lt('created_at', yesterday)
+            .not('type', 'eq', 'insight'); // Don't flush distilled truths
+
+        if (error) {
+            console.error("Earth Path Flush Failed:", error);
+            return 0;
+        }
+        return count || 0;
     }
 };
 

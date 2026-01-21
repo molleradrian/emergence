@@ -9,8 +9,10 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { VesselStore, ArtifactStore, HLogStore, MirrorStore, VCPStore, ProjectStore, SimulationStore, type Vessel, type Artifact, type HLogEvent, type VCPSignal, type Project, type Simulation, type SimulationRun } from '@/lib/nexus-store';
 import { IntegrationEngine } from '@/lib/integration-engine';
+import { DigestiveCircuit, type SystemMetabolism } from '@/lib/knowledge-engine';
 import { templates } from '@/lib/codex-templates';
 import { Loader2, ShieldCheck, Activity, RefreshCcw } from 'lucide-react';
+import { useHarmonicHeartbeat } from '@/hooks/useHarmonicHeartbeat';
 
 // View Components
 import { NexusView } from '@/components/nexus/NexusView';
@@ -24,9 +26,11 @@ import { SimulationsView } from '@/components/nexus/SimulationsView';
 import { CodexView } from '@/components/nexus/CodexView';
 import { CheckInView } from '@/components/nexus/CheckInView';
 import { SystemDiagnostics } from '@/components/nexus/SystemDiagnostics';
-import LatticeGovernor from '@/components/LatticeGovernor';
+import LatticeNode from '@/components/LatticeNode';
+import { VisualViewport } from '@/components/VisualViewport';
+import { GatewayController } from '@/components/GatewayController';
 
-type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin' | 'lattice';
+type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin' | 'lattice' | 'vision';
 
 interface Message {
     id: string;
@@ -47,6 +51,13 @@ export default function NexusPage() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [simulations, setSimulations] = useState<Simulation[]>([]);
     const [simulationRuns, setSimulationRuns] = useState<SimulationRun[]>([]);
+    const [systemMetabolism, setSystemMetabolism] = useState<SystemMetabolism | null>(null);
+    const [isSynthesizing, setIsSynthesizing] = useState(false);
+    const [visionUrl, setVisionUrl] = useState<string | null>(null);
+    const [isGeneratingVision, setIsGeneratingVision] = useState(false);
+    const [isPublic, setIsPublic] = useState(false);
+    const [pressure, setPressure] = useState(0);
+    const [tick, setTick] = useState(0);
     const [metrics, setMetrics] = useState<{
         knowledgeDensity: number;
         vesselEfficiency: number;
@@ -83,6 +94,21 @@ export default function NexusPage() {
         }
         return () => clearInterval(refreshInterval);
     }, [autoRefresh]);
+
+    // 40Hz Hive Spine
+    useHarmonicHeartbeat((t) => {
+        setTick(t);
+    });
+
+    // Inference Pressure Logic
+    useEffect(() => {
+        // Pressure increases if multiple agents write simultaneously
+        const recentLogs = hlogEvents.filter(e => 
+            new Date().getTime() - new Date(e.created_at).getTime() < 5000
+        );
+        const agentWrites = recentLogs.filter(e => e.type === 'vessel').length;
+        setPressure(Math.min(agentWrites * 0.2, 1));
+    }, [hlogEvents, tick]);
 
     // Load initial data
     useEffect(() => {
@@ -194,6 +220,58 @@ export default function NexusPage() {
         loadData();
     }
 
+    async function handleDigestBuffer() {
+        setIsSynthesizing(true);
+        setSomaticState('Extracting Nutrients');
+        try {
+            const metabolism = await DigestiveCircuit.digestBuffer();
+            if (metabolism) {
+                setSystemMetabolism(metabolism);
+                await HLogStore.record('insight', `Nutrients extracted. System DNA evolved: ${metabolism.personality}`);
+                // Activate Earth Path (Flush waste)
+                const flushed = await DigestiveCircuit.earthPathFlush();
+                if (flushed > 0) {
+                    await loadData(); // Reload if data was flushed
+                }
+            }
+        } catch (err) {
+            console.error("Metabolic Digestion failed", err);
+        } finally {
+            setIsSynthesizing(false);
+            setSomaticState('Calm');
+            loadData();
+        }
+    }
+
+    async function handleBreathCycle() {
+        if (!systemMetabolism) {
+            await handleDigestBuffer();
+        }
+        
+        // Re-check after possible synthesis
+        if (!systemMetabolism) return;
+
+        setSomaticState(systemMetabolism.somaticState);
+        setPulse(100);
+        setIsGeneratingVision(true);
+
+        const triggerGlitch = () => {
+            setGlitch(true);
+            setTimeout(() => setGlitch(false), 500);
+        };
+
+        const result = await IntegrationEngine.executeBreathCycle(systemMetabolism, triggerGlitch);
+        
+        if (result?.visionUrl) {
+            setVisionUrl(result.visionUrl);
+        }
+
+        setIsGeneratingVision(false);
+        setSomaticState('Calm');
+        setPulse(72);
+        loadData();
+    }
+
     const navItems = [
         { id: 'nexus' as ViewId, icon: '🧠', label: 'Nexus' },
         { id: 'projects' as ViewId, icon: '📋', label: 'Projects' },
@@ -206,6 +284,7 @@ export default function NexusPage() {
         { id: 'simulations' as ViewId, icon: '⚙️', label: 'Simulations' },
         { id: 'codex' as ViewId, icon: '📚', label: 'Codex' },
         { id: 'lattice' as ViewId, icon: '⚡', label: 'Governor' },
+        { id: 'vision' as ViewId, icon: '🖼️', label: 'Vision' },
     ];
 
     if (authLoading) {
@@ -241,7 +320,13 @@ export default function NexusPage() {
     }
 
     return (
-        <div className="nexus-bg min-h-screen flex" data-theme={tuningForkSetting}>
+        <GatewayController onPublicChange={setIsPublic} tick={tick}>
+            <div 
+                className={`nexus-bg min-h-screen flex transition-all duration-1000 ${isPublic ? 'border-4 border-[#ff6b9d]/30' : ''}`} 
+                data-theme={tuningForkSetting}
+                data-mood={systemMetabolism?.mood}
+                data-entropy={systemMetabolism?.mood === 'High Entropy' ? 'high' : 'normal'}
+            >
             {/* Sidebar */}
             <nav className="w-[72px] glass-panel !rounded-none flex flex-col items-center py-4 fixed left-0 top-0 h-screen z-50">
                 <button
@@ -282,6 +367,23 @@ export default function NexusPage() {
                     </div>
                     <div className="flex gap-2 items-center">
                         <button 
+                            onClick={handleDigestBuffer} 
+                            disabled={isSynthesizing}
+                            className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-white/10 text-[var(--text-muted)] hover:text-white transition-all"
+                            title="Digest Buffer (Metabolic Engine)"
+                        >
+                            {isSynthesizing ? <Loader2 className="h-3 w-3 animate-spin" /> : '🧬'}
+                            {systemMetabolism ? systemMetabolism.personality : 'Digest Buffer'}
+                        </button>
+                        <button 
+                            onClick={handleBreathCycle} 
+                            className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-gradient-to-r from-[#00f0ff]/20 to-[#b794f6]/20 border border-[#00f0ff]/30 text-white hover:border-[#00f0ff] transition-all"
+                            title="Execute Breath Cycle"
+                        >
+                            🌬️ Breath Cycle
+                        </button>
+                        <div className="w-px h-4 bg-white/10 mx-2" />
+                        <button 
                             onClick={() => setAutoRefresh(!autoRefresh)} 
                             className={`flex items-center gap-2 text-xs px-3 py-1 rounded-full transition-all ${autoRefresh ? 'bg-[var(--neon-blue)] text-black font-bold animate-pulse' : 'bg-white/10 text-[var(--text-muted)] hover:text-white'}`}
                             title={autoRefresh ? "Auto-Refresh Active (5s)" : "Enable Auto-Refresh"}
@@ -310,7 +412,44 @@ export default function NexusPage() {
                         <CheckInView />
                     </div>
                 )}
-                {currentView === 'lattice' && <LatticeGovernor />}
+                {currentView === 'lattice' && <LatticeNode />}
+                {currentView === 'vision' && (
+                    <div className="max-w-4xl mx-auto space-y-6">
+                        <VisualViewport 
+                            imageUrl={visionUrl || undefined} 
+                            isGenerating={isGeneratingVision} 
+                            mood={systemMetabolism?.mood}
+                            metabolicRate={pulse / 150}
+                            pressure={pressure}
+                            tick={tick}
+                        />
+                        <div className="glass-panel p-6 space-y-4">
+                            <h3 className="text-lg font-mono text-[#00f0ff]">SYSTEM_DNA // METABOLIC_STATE</h3>
+                            <div className="grid grid-cols-2 gap-4 text-xs font-mono">
+                                <div>
+                                    <span className="text-[var(--text-muted)]">PERSONALITY:</span>
+                                    <p className="text-white">{systemMetabolism?.personality || 'AWAITING_DIGESTION'}</p>
+                                </div>
+                                <div>
+                                    <span className="text-[var(--text-muted)]">MOOD:</span>
+                                    <p className="text-white">{systemMetabolism?.mood || 'NOMINAL'}</p>
+                                </div>
+                                <div className="col-span-2">
+                                    <span className="text-[var(--text-muted)]">DIRECTIVE:</span>
+                                    <p className="text-white">{systemMetabolism?.directive || 'STABILIZE_CORE'}</p>
+                                </div>
+                                <div className="col-span-2">
+                                    <span className="text-[var(--text-muted)]">ATOMIC_TRUTHS (PEPTIDES):</span>
+                                    <ul className="list-disc list-inside text-[#00ff99] space-y-1 mt-1">
+                                        {systemMetabolism?.peptides.map((p, i) => (
+                                            <li key={i}>{p}</li>
+                                        )) || <li>AWAITING_EXTRACTION...</li>}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
 
             {/* Diagnostics Overlay */}
@@ -408,7 +547,14 @@ export default function NexusPage() {
                 </div>
             )}
 
-            {glitch && <div className="glitch-overlay"></div>}
-        </div>
-    );
-}
+                        {glitch && <div className="glitch-overlay"></div>}
+
+                    </div>
+
+                    </GatewayController>
+
+                );
+
+            }
+
+            

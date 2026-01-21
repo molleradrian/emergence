@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { DocumentProcessor } from '../src/lib/rag/document-processor';
-import { VectorStore } from '../src/lib/rag/vector-store';
+import { DocumentProcessor } from '../src/lib/rag/document-processor.ts';
+import { VectorStore } from '../src/lib/rag/vector-store.ts';
 import path from 'path';
 
 async function main() {
@@ -11,16 +11,16 @@ async function main() {
         path.resolve(process.cwd(), 'docs'),
         path.resolve(process.cwd(), 'User Input')
     ];
-    
+
     const store = new VectorStore();
-    store.clear(); 
-    
+    store.clear();
+
     let totalChunks = 0;
 
     for (const dirPath of searchPaths) {
         console.log(`[RAG] Scanning directory: ${dirPath}`);
         const processor = new DocumentProcessor(dirPath);
-        
+
         for await (const fileChunks of processor.processFilesGenerator()) {
             if (fileChunks.length > 0) {
                 console.log(`[RAG] Ingesting ${fileChunks.length} chunks from ${fileChunks[0].source}...`);
@@ -29,7 +29,7 @@ async function main() {
             }
         }
     }
-    
+
     console.log(`[RAG] Successfully ingested ${totalChunks} chunks into the vector store.`);
 }
 

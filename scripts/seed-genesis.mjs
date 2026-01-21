@@ -1,9 +1,22 @@
-import { createClient } from '@supabase/supabase-js';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { config } from 'dotenv';
 
-const supabaseUrl = 'https://uihcpanxkidhdbazwrxd.supabase.co';
-const supabaseAnonKey = 'sb_publishable_Ak1z9jzOw_T6yKN-ZR-Pww_z9Sdz7Ic';
+config({ path: '.env.local' });
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const APP_ID = 'genesis-node-001';
 
 const genesisArtifacts = [
     { title: 'The Aetherium Hub: Official Blueprint & Functional Specification', content: 'Master architectural plan defining the OS/E philosophy, five core modules (Operations Hub, Grand Challenges, H_log, Simulation Engine, Codex), MoSCoW prioritization, and RBAC future state.', category: 'protocol', tags: ['Genesis', 'Blueprint', 'Architecture', 'Specification', 'MustHave'], source_type: 'import' },
@@ -23,20 +36,15 @@ async function seed() {
     
     for (const artifact of genesisArtifacts) {
         console.log(`Archiving: ${artifact.title}`);
-        const { error } = await supabase
-            .from('artifacts')
-            .insert({
-                ...artifact,
-                created_at: now,
-                modified_at: now,
-            });
-        
-        if (error) {
-            console.error(`Error archiving ${artifact.title}:`, error.message);
-        }
+        const id = artifact.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        await setDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'artifacts', id), {
+            ...artifact,
+            created_at: now,
+            modified_at: now,
+        });
     }
     
     console.log('Ceremony complete. The Aetherium is seeded.');
 }
 
-seed();
+seed().catch(console.error);

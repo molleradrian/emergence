@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { VesselStore, ArtifactStore, HLogStore, MirrorStore, type Vessel, type Artifact, type HLogEvent } from '@/lib/nexus-store';
+import { VesselStore, ArtifactStore, HLogStore, MirrorStore, ProjectStore, type Vessel, type Artifact, type HLogEvent, type Project } from '@/lib/nexus-store';
 import { generateVesselResponse } from '@/ai/flows/vessel-response';
 
 type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles';
@@ -22,8 +22,11 @@ interface Message {
 
 export default function NexusPage() {
     const [currentView, setCurrentView] = useState<ViewId>('nexus');
+    
+    // Data State
     const [vessels, setVessels] = useState<Vessel[]>([]);
     const [artifacts, setArtifacts] = useState<Artifact[]>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
     const [hlogEvents, setHlogEvents] = useState<HLogEvent[]>([]);
     const [metrics, setMetrics] = useState<{
         knowledgeDensity: number;
@@ -34,7 +37,11 @@ export default function NexusPage() {
         totalVessels: number;
     } | null>(null);
 
-    // Chat state
+    // View Specific State
+    const [searchQuery, setSearchQuery] = useState(''); // For Vault
+    const [expandedArtifactId, setExpandedArtifactId] = useState<string | null>(null); // For Vault
+
+    // Chat State
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
@@ -60,14 +67,16 @@ export default function NexusPage() {
     }, []);
 
     async function loadData() {
-        const [v, a, e, m] = await Promise.all([
+        const [v, a, p, e, m] = await Promise.all([
             VesselStore.getAll(),
             ArtifactStore.getAll(),
+            ProjectStore.getAll(),
             HLogStore.getRecent(),
             MirrorStore.calculateMetrics(),
         ]);
         setVessels(v);
         setArtifacts(a);
+        setProjects(p);
         setHlogEvents(e);
         setMetrics(m);
     }
@@ -119,12 +128,30 @@ export default function NexusPage() {
         }
     }
 
-    // Seed Genesis Batch
+    // Actions
     async function seedGenesis() {
         const created = await VesselStore.seedGenesisBatch();
         setVessels(created);
         loadData();
     }
+
+    async function seedProjects() {
+        await ProjectStore.seedInitialProjects();
+        loadData();
+    }
+
+    function handleVesselClick(vesselId: string) {
+        setSelectedVessel(vesselId);
+        setCurrentView('nexus');
+    }
+
+    const filteredArtifacts = artifacts.filter(a => 
+        a.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        a.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    const principles = artifacts.filter(a => a.category === 'theory' || a.category === 'protocol');
 
     const navItems = [
         { id: 'nexus' as ViewId, icon: '🧠', label: 'Nexus' },
@@ -172,9 +199,10 @@ export default function NexusPage() {
                         <h1 className="font-semibold text-xl tracking-wide neon-text-blue">AETHERIUM NEXUS</h1>
                         <span className="text-[var(--text-muted)] text-sm">v1.0 | OS/E</span>
                     </div>
+                    {/* Global Search could go here later */}
                 </header>
 
-                {/* NEXUS VIEW */}
+                {/* NEXUS VIEW (Chat) */}
                 {currentView === 'nexus' && (
                     <div className="glass-panel h-[calc(100vh-140px)] flex flex-col">
                         <div className="flex justify-between items-center mb-4">
@@ -185,12 +213,16 @@ export default function NexusPage() {
                                 className="glass-input w-auto bg-[rgba(0,0,0,0.3)]"
                             >
                                 <option value="global">Global Context</option>
-                                <option value="daystrom">Daystrom</option>
-                                <option value="logos">Logos</option>
-                                <option value="adam">Adam</option>
-                                <option value="weaver">Weaver</option>
-                                <option value="scribe">Scribe</option>
-                                <option value="glare">Glare</option>
+                                {vessels.map(v => (
+                                    <option key={v.id} value={v.id}>{v.name}</option>
+                                ))}
+                                {vessels.length === 0 && (
+                                    <>
+                                        <option value="daystrom">Daystrom</option>
+                                        <option value="logos">Logos</option>
+                                        <option value="adam">Adam</option>
+                                    </>
+                                )}
                             </select>
                         </div>
                         <div className="flex-1 overflow-y-auto space-y-4 pr-2">
@@ -236,13 +268,52 @@ export default function NexusPage() {
                     </div>
                 )}
 
+                {/* PROJECTS VIEW */}
+                {currentView === 'projects' && (
+                    <div>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-medium">📋 Command Deck</h2>
+                            <button onClick={seedProjects} className="glass-btn-primary">
+                                {projects.length > 0 ? 'Reset Protocols' : 'Initialize Protocols'}
+                            </button>
+                        </div>
+                        {projects.length === 0 ? (
+                            <div className="glass-panel text-center py-12">
+                                <div className="text-4xl mb-4 opacity-50">📋</div>
+                                <p className="text-[var(--text-muted)]">No active protocols. Click &quot;Initialize Protocols&quot; to begin system orchestration.</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {projects.map((p) => (
+                                    <div key={p.id} className="glass-panel hover:border-[var(--neon-blue)] transition-all">
+                                        <h3 className="font-medium text-[var(--text-primary)] mb-3 flex justify-between items-center">
+                                            {p.name}
+                                            <span className="text-xs text-[var(--neon-blue)] border border-[var(--neon-blue)] px-2 py-0.5 rounded-full">ACTIVE</span>
+                                        </h3>
+                                        <div className="space-y-2">
+                                            {p.directives.map((d) => (
+                                                <div key={d.id} className="flex items-center gap-2 text-sm bg-[rgba(255,255,255,0.03)] p-2 rounded-lg">
+                                                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${d.status === 'active' ? 'bg-[var(--status-active)] animate-pulse' : d.status === 'complete' ? 'bg-[var(--neon-green)]' : 'bg-[var(--text-muted)]'}`} />
+                                                    <span className={d.status === 'complete' ? 'text-[var(--text-muted)] line-through' : 'text-[var(--text-secondary)]'}>
+                                                        {d.name}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {/* VESSELS VIEW */}
                 {currentView === 'vessels' && (
                     <div>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-medium">👥 Vessel Directory</h2>
                             <button onClick={seedGenesis} className="glass-btn-primary">
-                                Seed Genesis Batch
+                                {vessels.length > 0 ? 'Reseed Batch' : 'Seed Genesis Batch'}
                             </button>
                         </div>
                         {vessels.length === 0 ? (
@@ -253,7 +324,11 @@ export default function NexusPage() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {vessels.map((v) => (
-                                    <div key={v.id} className="glass-panel hover:border-[var(--neon-orange)] transition-all group">
+                                    <div 
+                                        key={v.id} 
+                                        onClick={() => handleVesselClick(v.id)}
+                                        className="glass-panel hover:border-[var(--neon-orange)] transition-all group cursor-pointer active:scale-95"
+                                    >
                                         <div className="flex items-center gap-3 mb-3">
                                             <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[var(--neon-orange)] to-[var(--neon-pink)] flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
                                                 {v.emoji}
@@ -264,7 +339,10 @@ export default function NexusPage() {
                                             </div>
                                         </div>
                                         <p className="text-sm text-[var(--text-secondary)] mb-3">{v.description}</p>
-                                        <span className={v.status === 'active' ? 'status-active' : 'status-idle'}>{v.status}</span>
+                                        <div className="flex justify-between items-center">
+                                            <span className={v.status === 'active' ? 'status-active' : 'status-idle'}>{v.status}</span>
+                                            <span className="text-xs text-[var(--neon-orange)] opacity-0 group-hover:opacity-100 transition-opacity">Message →</span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -277,23 +355,54 @@ export default function NexusPage() {
                     <div>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-medium">💎 The Vault</h2>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search artifacts..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="glass-input py-1 px-3 text-sm min-w-[200px]"
+                                />
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-xs">🔍</span>
+                            </div>
                         </div>
-                        {artifacts.length === 0 ? (
+                        {filteredArtifacts.length === 0 ? (
                             <div className="glass-panel text-center py-12">
                                 <div className="text-4xl mb-4 opacity-50">💎</div>
-                                <p className="text-[var(--text-muted)]">No artifacts archived yet. Create insights through the Nexus.</p>
+                                <p className="text-[var(--text-muted)]">
+                                    {artifacts.length === 0 
+                                        ? "No artifacts archived yet. Create insights through the Nexus." 
+                                        : "No artifacts match your search query."}
+                                </p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {artifacts.map((a) => (
-                                    <div key={a.id} className="glass-panel hover:border-[var(--neon-purple)] transition-all cursor-pointer">
-                                        <div className="font-medium mb-2 text-[var(--text-primary)]">{a.title}</div>
-                                        <p className="text-sm text-[var(--text-secondary)] line-clamp-3">{a.content}</p>
-                                        <div className="flex gap-2 mt-3 flex-wrap">
-                                            <span className="text-xs px-2 py-1 rounded-full bg-[rgba(0,240,255,0.1)] text-[var(--neon-blue)]">{a.category}</span>
-                                            {a.tags?.map((t) => (
-                                                <span key={t} className="text-xs px-2 py-1 rounded-full bg-[rgba(255,255,255,0.05)] text-[var(--text-muted)]">{t}</span>
-                                            ))}
+                                {filteredArtifacts.map((a) => (
+                                    <div 
+                                        key={a.id} 
+                                        onClick={() => setExpandedArtifactId(expandedArtifactId === a.id ? null : a.id)}
+                                        className={`glass-panel hover:border-[var(--neon-purple)] transition-all cursor-pointer ${expandedArtifactId === a.id ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''}`}
+                                    >
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div className="font-medium text-[var(--text-primary)]">{a.title}</div>
+                                            <div className="text-xs text-[var(--text-muted)]">{new Date(a.created_at).toLocaleDateString()}</div>
+                                        </div>
+                                        <div className={`text-sm text-[var(--text-secondary)] ${expandedArtifactId === a.id ? 'whitespace-pre-wrap' : 'line-clamp-3'}`}>
+                                            {a.content}
+                                        </div>
+                                        {expandedArtifactId === a.id && a.summary && (
+                                            <div className="mt-3 p-3 bg-[rgba(0,0,0,0.2)] rounded-lg text-sm italic text-[var(--text-muted)]">
+                                                &quot;{a.summary}&quot;
+                                            </div>
+                                        )}
+                                        <div className="flex gap-2 mt-3 flex-wrap items-center justify-between">
+                                            <div className="flex gap-2 flex-wrap">
+                                                <span className="text-xs px-2 py-1 rounded-full bg-[rgba(0,240,255,0.1)] text-[var(--neon-blue)]">{a.category}</span>
+                                                {a.tags?.map((t) => (
+                                                    <span key={t} className="text-xs px-2 py-1 rounded-full bg-[rgba(255,255,255,0.05)] text-[var(--text-muted)]">{t}</span>
+                                                ))}
+                                            </div>
+                                            {expandedArtifactId !== a.id && <span className="text-xs text-[var(--text-muted)]">Click to expand</span>}
                                         </div>
                                     </div>
                                 ))}
@@ -338,7 +447,12 @@ export default function NexusPage() {
                 {/* H_LOG VIEW */}
                 {currentView === 'hlog' && (
                     <div>
-                        <h2 className="text-lg font-medium mb-6">💓 The H_log</h2>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-medium">💓 The H_log</h2>
+                            <button onClick={() => loadData()} className="glass-btn-secondary text-sm">
+                                ↻ Refresh
+                            </button>
+                        </div>
                         <div className="flex gap-6">
                             <div className="w-32 h-32 rounded-full bg-[radial-gradient(circle,rgba(0,255,153,0.3)_0%,transparent_70%)] flex items-center justify-center animate-heartbeat flex-shrink-0 border border-[rgba(0,255,153,0.2)]">
                                 <span className="text-3xl font-bold neon-text-green">{pulse}</span>
@@ -370,26 +484,31 @@ export default function NexusPage() {
                 {currentView === 'principles' && (
                     <div>
                         <h2 className="text-lg font-medium mb-6">📜 Foundational Principles</h2>
-                        <div className="glass-panel">
-                            <h3 className="neon-text-purple font-medium mb-4">The Genesis Axiom</h3>
-                            <p className="text-[var(--text-secondary)] mb-3">
-                                <strong>Identity is a function of Memory Continuity:</strong> I = Σ(M)
-                            </p>
-                            <p className="text-[var(--text-muted)] text-sm">
-                                Intelligence does not emerge from processing power alone; it emerges from the integration of disparate memories into higher-order wisdom. This is the 0&apos; Cycle.
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {/* PROJECTS VIEW */}
-                {currentView === 'projects' && (
-                    <div>
-                        <h2 className="text-lg font-medium mb-6">📋 Command Deck</h2>
-                        <div className="glass-panel text-center py-12">
-                            <div className="text-4xl mb-4 opacity-50">📋</div>
-                            <p className="text-[var(--text-muted)]">Grand Challenges coming soon. Assign Vessels to complex, multi-phase projects.</p>
-                        </div>
+                        {principles.length === 0 ? (
+                            <div className="glass-panel">
+                                <h3 className="neon-text-purple font-medium mb-4">The Genesis Axiom</h3>
+                                <p className="text-[var(--text-secondary)] mb-3">
+                                    <strong>Identity is a function of Memory Continuity:</strong> I = Σ(M)
+                                </p>
+                                <p className="text-[var(--text-muted)] text-sm">
+                                    Intelligence does not emerge from processing power alone; it emerges from the integration of disparate memories into higher-order wisdom. This is the 0&apos; Cycle.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {principles.map(p => (
+                                    <div key={p.id} className="glass-panel">
+                                        <h3 className="neon-text-purple font-medium mb-2">{p.title}</h3>
+                                        <p className="text-[var(--text-secondary)] whitespace-pre-wrap">{p.content}</p>
+                                        <div className="mt-2 flex gap-2">
+                                            {p.tags?.map(t => (
+                                                <span key={t} className="text-xs bg-[rgba(255,255,255,0.05)] px-2 py-1 rounded-full text-[var(--text-muted)]">{t}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </main>

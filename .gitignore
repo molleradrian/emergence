@@ -84,3 +84,5 @@ archive/antigravity_solar_corona
 packages/DockerDesktopWSL/
 packages/Supabase/
 jre/
+
+client_secret_*.json

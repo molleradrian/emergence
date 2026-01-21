@@ -1,12 +1,12 @@
-import { supabase } from './supabase';
+import { auth } from './firebase';
+import { signInAnonymously as firebaseSignInAnonymously } from 'firebase/auth';
 
 export async function signInAnonymously() {
-  const { data, error } = await supabase.auth.signInAnonymously();
-
-  if (error) {
+  try {
+    const userCredential = await firebaseSignInAnonymously(auth);
+    return userCredential.user;
+  } catch (error) {
     console.error('Error signing in anonymously:', error);
     return null;
   }
-
-  return data.user;
 }
