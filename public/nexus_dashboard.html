@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS Dashboard: Idea Evolution System</title>
+    <link rel="stylesheet" href="nexus_dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🌟 NEXUS Dashboard</h1>
+            <p class="tagline">Managing the evolution of synthetic consciousness research.</p>
+
+            <div class="stats-bar glassmorphism">
+                <div class="stat-item">
+                    <span class="stat-label">Total Ideas</span>
+                    <span id="stat-total" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Under Review</span>
+                    <span id="stat-review" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Ingested</span>
+                    <span id="stat-ingested" class="stat-value">0</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="controls-area glassmorphism">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search ideas, status, or tags...">
+            </div>
+            <div class="filter-box">
+                <button class="filter-btn active" data-status="all">All</button>
+                <button class="filter-btn" data-status="draft">Draft</button>
+                <button class="filter-btn" data-status="under_review">Under Review</button>
+                <button class="filter-btn" data-status="revised">Revised</button>
+                <button class="filter-btn" data-status="ingested">Ingested</button>
+            </div>
+        </section>
+
+        <main id="dashboard-grid" class="dashboard-grid">
+            <!-- Idea Cards will be dynamically loaded here -->
+        </main>
+    </div>
+
+    <script src="nexus_data.js"></script>
+    <script src="nexus_dashboard.js"></script>
+</body>
+
+</html>

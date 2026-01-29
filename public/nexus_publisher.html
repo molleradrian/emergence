@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Multi-Track Publisher</title>
+    <link rel="stylesheet" href="nexus_dashboard.css">
+    <link rel="stylesheet" href="nexus_publisher.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="dark-theme">
+    <div class="container glassmorphism">
+        <header>
+            <div class="header-left">
+                <h1>Nexus <span class="accent">Publisher</span></h1>
+                <p class="subtitle">Phase 3: Multi-Track Canonization Engine</p>
+            </div>
+            <div class="header-right">
+                <a href="nexus_dashboard.html" class="nav-link">← Dashboard</a>
+            </div>
+        </header>
+
+        <main class="publisher-grid">
+            <!-- Step 1: Idea Selection -->
+            <section class="selection-panel glass-card">
+                <h2>1. Select Ingested Idea</h2>
+                <div id="idea-selection-list" class="selection-list">
+                    <!-- Dynamic list of ingested ideas -->
+                </div>
+            </section>
+
+            <!-- Step 2: Track & Format Selection -->
+            <section class="preview-panel glass-card">
+                <div id="no-selection-notice">
+                    <p>Select an idea to begin synthesis.</p>
+                </div>
+                <div id="publisher-controls" style="display: none;">
+                    <h2 id="selected-idea-title">Idea Title</h2>
+                    <div class="track-selector">
+                        <button class="track-btn active" data-track="scientific">Scientific</button>
+                        <button class="track-btn" data-track="philosophical">Philosophical</button>
+                        <button class="track-btn" data-track="artistic">Artistic</button>
+                        <button class="track-btn" data-track="educational">Educational</button>
+                    </div>
+
+                    <div class="output-preview">
+                        <h3>Output Preview</h3>
+                        <div id="preview-content" class="preview-box">
+                            <!-- Preview text will appear here -->
+                        </div>
+                    </div>
+
+                    <div class="action-footer">
+                        <button id="download-md-btn" class="action-btn primary">Download Markdown</button>
+                        <button id="canonize-btn" class="action-btn accent-btn">Canonize (Publish)</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="nexus_data.js"></script>
+    <script src="nexus_publisher.js"></script>
+</body>
+
+</html>

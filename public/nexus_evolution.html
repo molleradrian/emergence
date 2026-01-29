@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS v1.0: Idea Evolution Tracker</title>
+    <link rel="stylesheet" href="nexus_evolution.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <a href="nexus_dashboard.html" class="back-btn">← Back to Dashboard</a>
+            </div>
+            <h1>🌟 NEXUS v1.0: Idea Evolution Tracker</h1>
+            <p class="tagline">The Nexus manages intellectual evolution through self-correction.</p>
+        </header>
+
+        <main>
+            <section class="idea-card glassmorphism">
+                <h2 id="idea-title">Badenhorst Cylinder Time Model</h2>
+                <div class="timeline">
+                    <!-- Timeline items will be dynamically loaded here by JS -->
+                </div>
+                <div class="output-panel">
+                    <h3>Version Details: <span id="current-version-title">v1.0 - Initial Speculative Idea</span></h3>
+                    <div id="version-content">
+                        <!-- Content for selected version will be loaded here by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="review-citation-panels">
+                <div id="galactus-review-panel" class="panel glassmorphism">
+                    <h3 id="review-panel-title">Review Details</h3>
+                    <div class="review-details">
+                        <!-- Review details will be loaded here by JS -->
+                    </div>
+                </div>
+
+                <div class="panel glassmorphism">
+                    <h3>Citation & Academic Grounding</h3>
+                    <ul id="citation-list">
+                        <!-- Citations will be loaded here by JS -->
+                    </ul>
+                </div>
+            </section>
+
+            <section class="output-generation glassmorphism">
+                <h3>Multi-Track Output Generation</h3>
+                <div class="output-buttons">
+                    <button class="output-btn" data-track="scientific">📄 Scientific Paper</button>
+                    <button class="output-btn" data-track="philosophical">💭 Philosophical Essay</button>
+                    <button class="output-btn" data-track="artistic">🎨 Comic Narrative</button>
+                    <button class="output-btn" data-track="educational">🌐 Interactive Simulation</button>
+                </div>
+                <div id="output-display" class="output-display">
+                    <!-- Multi-track output will be displayed here by JS -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="nexus_data.js"></script>
+    <script src="nexus_evolution.js"></script>
+</body>
+</html>

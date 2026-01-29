@@ -51,7 +51,7 @@ export default function EvolutionTracker({ idea, onClose }: EvolutionTrackerProp
                 <div className="flex space-x-2">
                     <span className={cn(
                         "px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider border",
-                        idea.status === 'published' ? "bg-green-500/10 text-green-400 border-green-500/20" :
+                        idea.status === 'ingested' ? "bg-green-500/10 text-green-400 border-green-500/20" :
                             idea.status === 'under_review' ? "bg-red-500/10 text-red-400 border-red-500/20" :
                                 idea.status === 'revised' ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
                                     "bg-gray-500/10 text-gray-400 border-gray-500/20"

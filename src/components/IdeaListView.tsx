@@ -33,7 +33,7 @@ export function IdeaListView({ onSelectIdea }: IdeaListViewProps) {
                         </div>
                         <span className={cn(
                             "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border",
-                            idea.status === 'published' ? "text-green-400 border-green-500/20" :
+                            idea.status === 'ingested' ? "text-green-400 border-green-500/20" :
                                 idea.status === 'under_review' ? "text-red-400 border-red-500/20" :
                                     "text-blue-400 border-blue-500/20"
                         )}>

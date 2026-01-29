@@ -13,17 +13,20 @@ A **premium, interactive interface** that demonstrates the core insight: **The N
 ## Key Features Implemented
 
 ### 1. **Idea Card with Evolution Timeline**
+
 - Visual timeline showing version progression: v1.0 → Review → v1.1 → v2.0
 - Interactive timeline items (click to view version details)
 - Color-coded version types (blue) vs. reviews (red)
 
 ### 2. **Internal Review System (Galactus Review)**
+
 - Dedicated review panel showing:
   - Findings (what needs improvement)
   - Recommendations (how to improve)
   - Reviewer metadata (who, when, priority)
 
 ### 3. **Citation & Academic Grounding Panel**
+
 - Links to source materials:
   - University of Pretoria (Phillip Badenhorst)
   - Big Bounce cosmology papers
@@ -31,13 +34,16 @@ A **premium, interactive interface** that demonstrates the core insight: **The N
   - Philosophical time topology research
 
 ### 4. **Multi-Track Output Generation**
+
 Four distinct output formats from the same core idea:
+
 - **📄 Scientific Paper** - With citations, academic rigor
 - **💭 Philosophical Essay** - Explicitly speculative, metaphorical
 - **🎨 Comic Narrative** - Visual storytelling (Issue #3 script)
 - **🌐 Interactive Simulation** - Educational visualization parameters
 
 ### 5. **Premium Design Aesthetics**
+
 - Glassmorphism effects with backdrop blur
 - Gradient accents (blue → purple)
 - Smooth animations and micro-interactions
@@ -60,13 +66,17 @@ This interface demonstrates the **entire self-correction workflow** using a real
 ## How to Use
 
 ### View Version History
+
 Click any timeline item to see that version's full content in the output panel.
 
 ### Review the Galactus Critique
+
 Click the "Galactus Review" timeline item to scroll to the review panel.
 
 ### Generate Different Outputs
+
 Click any of the four track buttons to see how the same idea can be presented for different audiences:
+
 - Scientists need citations and rigor
 - Philosophers need conceptual clarity
 - Artists need narrative structure
@@ -75,18 +85,20 @@ Click any of the four track buttons to see how the same idea can be presented fo
 ## Next Steps (Week 1-3 Roadmap)
 
 ### Phase 1: Generalize the System (Week 2)
-```
+
+```text
 Create: nexus_dashboard.html
 
 Features:
 - List view of ALL ideas (not just Badenhorst Cylinder)
-- Filter by status: Draft, Under Review, Revised, Published
+- Filter by status: Draft, Under Review, Revised, Ingested
 - Quick actions: Assign for review, Create new version
 - Search and categorization
 ```
 
 ### Phase 2: Review Protocol Dashboard (Week 2)
-```
+
+```text
 Add to nexus_dashboard.html:
 
 - Review assignment system
@@ -99,14 +111,15 @@ Add to nexus_dashboard.html:
 ```
 
 ### Phase 3: Multi-Track Publisher (Week 3)
-```
+
+```text
 Create: nexus_publisher.html
 
 Features:
 - One-click generation of all output formats
 - Template system for different tracks
 - Export functionality (PDF, Markdown, HTML)
-- Publication workflow management
+- Ingested/Reviewed (Ready for Canonization)
 ```
 
 ## Database Schema (Next Implementation)
@@ -117,7 +130,7 @@ const NexusSchema = {
     id: "idea_badenhorst_cylinder",
     title: "Badenhorst Cylinder Time Model",
     description: "Speculative cylindrical model of time",
-    status: "under_review", // draft, under_review, revised, published
+    status: "ingested", // draft, under_review, revised, ingested
     type: "speculative_hypothesis",
     created: "2025-09-10",
     
@@ -170,7 +183,7 @@ const NexusSchema = {
 
 ## File Structure
 
-```
+```text
 Emergence/
 ├── nexus_evolution.html          ← What we just built (Case Study)
 ├── nexus_dashboard.html          ← Next: Full idea list (Week 2)
@@ -184,6 +197,7 @@ Emergence/
 The Nexus is no longer just a **static archive** of ideas.
 
 It's a **dynamic quality control system** that:
+
 - Tracks idea evolution through versions
 - Applies internal peer review (Galactus, Eris, Adam)
 - Validates academic grounding
@@ -202,6 +216,7 @@ It's a **dynamic quality control system** that:
 ## Testing the Current Build
 
 Open `nexus_evolution.html` and:
+
 1. Click through the timeline items (v1.0, Review, v1.1, v2.0)
 2. Click each output track button (Scientific, Philosophical, Comic, Simulation)
 3. Observe how the same idea transforms for different audiences

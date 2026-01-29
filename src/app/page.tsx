@@ -26,18 +26,14 @@ import { SimulationsView } from '@/components/nexus/SimulationsView';
 import { CodexView } from '@/components/nexus/CodexView';
 import { CheckInView } from '@/components/nexus/CheckInView';
 import { SystemDiagnostics } from '@/components/nexus/SystemDiagnostics';
-<<<<<<< HEAD
 import LatticeGovernor from '@/components/LatticeGovernor';
-import { ReboundView } from '@/components/nexus/ReboundView';
-
-type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin' | 'lattice' | 'rebound';
-=======
-import LatticeNode from '@/components/LatticeNode';
+import { ReboundView } from '@/components/nexus/reboundview';
 import { VisualViewport } from '@/components/VisualViewport';
 import { GatewayController } from '@/components/GatewayController';
+import EvolutionTerminal from '@/components/nexus/EvolutionTerminal';
+import { PortalView } from '@/components/nexus/PortalView';
 
-type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'checkin' | 'lattice' | 'vision';
->>>>>>> 0e86387f762a847d4d8536909fcfa36be27897c5
+type ViewId = 'portal' | 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles' | 'simulations' | 'codex' | 'lattice' | 'rebound' | 'vision' | 'evolution';
 
 interface Message {
     id: string;
@@ -50,7 +46,7 @@ interface Message {
 
 export default function NexusPage() {
     const { user, isUserLoading: authLoading } = useAuth();
-    const [currentView, setCurrentView] = useState<ViewId>('nexus');
+    const [currentView, setCurrentView] = useState<ViewId>('portal');
     const [vessels, setVessels] = useState<Vessel[]>([]);
     const [artifacts, setArtifacts] = useState<Artifact[]>([]);
     const [hlogEvents, setHlogEvents] = useState<HLogEvent[]>([]);
@@ -110,7 +106,7 @@ export default function NexusPage() {
     // Inference Pressure Logic
     useEffect(() => {
         // Pressure increases if multiple agents write simultaneously
-        const recentLogs = hlogEvents.filter(e => 
+        const recentLogs = hlogEvents.filter(e =>
             new Date().getTime() - new Date(e.created_at).getTime() < 5000
         );
         const agentWrites = recentLogs.filter(e => e.type === 'vessel').length;
@@ -254,7 +250,7 @@ export default function NexusPage() {
         if (!systemMetabolism) {
             await handleDigestBuffer();
         }
-        
+
         // Re-check after possible synthesis
         if (!systemMetabolism) return;
 
@@ -268,7 +264,7 @@ export default function NexusPage() {
         };
 
         const result = await IntegrationEngine.executeBreathCycle(systemMetabolism, triggerGlitch);
-        
+
         if (result?.visionUrl) {
             setVisionUrl(result.visionUrl);
         }
@@ -280,6 +276,7 @@ export default function NexusPage() {
     }
 
     const navItems = [
+        { id: 'portal' as ViewId, icon: '🏠', label: 'Portal' },
         { id: 'nexus' as ViewId, icon: '🧠', label: 'Nexus' },
         { id: 'projects' as ViewId, icon: '📋', label: 'Projects' },
         { id: 'vessels' as ViewId, icon: '👥', label: 'Vessels' },
@@ -291,11 +288,9 @@ export default function NexusPage() {
         { id: 'simulations' as ViewId, icon: '⚙️', label: 'Simulations' },
         { id: 'codex' as ViewId, icon: '📚', label: 'Codex' },
         { id: 'lattice' as ViewId, icon: '⚡', label: 'Governor' },
-<<<<<<< HEAD
         { id: 'rebound' as ViewId, icon: '💫', label: 'Rebound' },
-=======
         { id: 'vision' as ViewId, icon: '🖼️', label: 'Vision' },
->>>>>>> 0e86387f762a847d4d8536909fcfa36be27897c5
+        { id: 'evolution' as ViewId, icon: '🧬', label: 'Evolution' },
     ];
 
     if (authLoading) {
@@ -332,245 +327,255 @@ export default function NexusPage() {
 
     return (
         <GatewayController onPublicChange={setIsPublic} tick={tick}>
-            <div 
-                className={`nexus-bg min-h-screen flex transition-all duration-1000 ${isPublic ? 'border-4 border-[#ff6b9d]/30' : ''}`} 
+            <div
+                className={`nexus-bg min-h-screen flex transition-all duration-1000 ${isPublic ? 'border-4 border-[#ff6b9d]/30' : ''}`}
                 data-theme={tuningForkSetting}
                 data-mood={systemMetabolism?.mood}
                 data-entropy={systemMetabolism?.mood === 'High Entropy' ? 'high' : 'normal'}
             >
-            {/* Sidebar */}
-            <nav className="w-[72px] glass-panel !rounded-none flex flex-col items-center py-4 fixed left-0 top-0 h-screen z-50">
-                <button
-                    onClick={() => setShowDiagnostics(true)}
-                    className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--neon-blue)] to-[var(--neon-purple)] flex items-center justify-center text-xl mb-6 animate-pulse-glow hover:scale-105 transition-transform"
-                    title="System Diagnostics (Glare Protocol)"
-                >
-                    {lastError ? <Activity className="text-red-500 animate-bounce" /> : '🌀'}
-                </button>
-                <div className="flex flex-col gap-2 flex-1">
-                    {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => setCurrentView(item.id)}
-                            className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all ${currentView === item.id
-                                ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.3)] shadow-[0_0_15px_rgba(0,240,255,0.15)]'
-                                : 'hover:bg-[rgba(255,255,255,0.05)]'
-                                }`}
-                            title={item.label}
-                        >
-                            {item.icon}
-                        </button>
-                    ))}
-                </div>
-                <div
-                    className={`w-3 h-3 rounded-full animate-heartbeat mb-2 ${lastError ? 'bg-red-500' : 'bg-[var(--status-active)]'}`}
-                    title={`Pulse: ${pulse} BPM | Status: ${lastError ? 'Instability Detected' : 'Nominal'}`}
-                />
-            </nav>
+                {/* Sidebar */}
+                <nav className="w-[72px] glass-panel !rounded-none flex flex-col items-center py-4 fixed left-0 top-0 h-screen z-50">
+                    <button
+                        onClick={() => setShowDiagnostics(true)}
+                        className="w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--neon-blue)] to-[var(--neon-purple)] flex items-center justify-center text-xl mb-6 animate-pulse-glow hover:scale-105 transition-transform"
+                        title="System Diagnostics (Glare Protocol)"
+                    >
+                        {lastError ? <Activity className="text-red-500 animate-bounce" /> : '🌀'}
+                    </button>
+                    <div className="flex flex-col gap-2 flex-1">
+                        {navItems.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => setCurrentView(item.id)}
+                                className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all ${currentView === item.id
+                                    ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.3)] shadow-[0_0_15px_rgba(0,240,255,0.15)]'
+                                    : 'hover:bg-[rgba(255,255,255,0.05)]'
+                                    }`}
+                                title={item.label}
+                            >
+                                {item.icon}
+                            </button>
+                        ))}
+                    </div>
+                    <div
+                        className={`w-3 h-3 rounded-full animate-heartbeat mb-2 ${lastError ? 'bg-red-500' : 'bg-[var(--status-active)]'}`}
+                        title={`Pulse: ${pulse} BPM | Status: ${lastError ? 'Instability Detected' : 'Nominal'}`}
+                    />
+                </nav>
 
-            {/* Main Content */}
-            <main className="flex-1 ml-[72px] p-6">
-                {/* Header */}
-                <header className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="font-semibold text-xl tracking-wide neon-text-blue">AETHERIUM NEXUS</h1>
-                        <span className="text-[var(--text-muted)] text-sm">v1.0 | OS/E</span>
-                    </div>
-                    <div className="flex gap-2 items-center">
-                        <button 
-                            onClick={handleDigestBuffer} 
-                            disabled={isSynthesizing}
-                            className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-white/10 text-[var(--text-muted)] hover:text-white transition-all"
-                            title="Digest Buffer (Metabolic Engine)"
-                        >
-                            {isSynthesizing ? <Loader2 className="h-3 w-3 animate-spin" /> : '🧬'}
-                            {systemMetabolism ? systemMetabolism.personality : 'Digest Buffer'}
-                        </button>
-                        <button 
-                            onClick={handleBreathCycle} 
-                            className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-gradient-to-r from-[#00f0ff]/20 to-[#b794f6]/20 border border-[#00f0ff]/30 text-white hover:border-[#00f0ff] transition-all"
-                            title="Execute Breath Cycle"
-                        >
-                            🌬️ Breath Cycle
-                        </button>
-                        <div className="w-px h-4 bg-white/10 mx-2" />
-                        <button 
-                            onClick={() => setAutoRefresh(!autoRefresh)} 
-                            className={`flex items-center gap-2 text-xs px-3 py-1 rounded-full transition-all ${autoRefresh ? 'bg-[var(--neon-blue)] text-black font-bold animate-pulse' : 'bg-white/10 text-[var(--text-muted)] hover:text-white'}`}
-                            title={autoRefresh ? "Auto-Refresh Active (5s)" : "Enable Auto-Refresh"}
-                        >
-                            <RefreshCcw className={`h-3 w-3 ${autoRefresh ? 'animate-spin' : ''}`} />
-                            {autoRefresh ? 'LIVE' : 'SYNC'}
-                        </button>
-                        <div className="w-px h-4 bg-white/10 mx-2" />
-                        <button onClick={() => setTuningForkSetting('focus')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'focus' ? 'bg-white text-black' : 'bg-white/10'}`}>Focus</button>
-                        <button onClick={() => setTuningForkSetting('creative')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'creative' ? 'bg-white text-black' : 'bg-white/10'}`}>Creative</button>
-                        <button onClick={() => setTuningForkSetting('calm')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'calm' ? 'bg-white text-black' : 'bg-white/10'}`}>Calm</button>
-                    </div>
-                </header>
+                {/* Main Content */}
+                <main className="flex-1 ml-[72px] p-6">
+                    {/* Header */}
+                    <header className="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 className="font-semibold text-xl tracking-wide neon-text-blue">AETHERIUM NEXUS</h1>
+                            <span className="text-[var(--text-muted)] text-sm">v1.0 | OS/E</span>
+                        </div>
+                        <div className="flex gap-2 items-center">
+                            <button
+                                onClick={handleDigestBuffer}
+                                disabled={isSynthesizing}
+                                className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-white/10 text-[var(--text-muted)] hover:text-white transition-all"
+                                title="Digest Buffer (Metabolic Engine)"
+                            >
+                                {isSynthesizing ? <Loader2 className="h-3 w-3 animate-spin" /> : '🧬'}
+                                {systemMetabolism ? systemMetabolism.personality : 'Digest Buffer'}
+                            </button>
+                            <button
+                                onClick={handleBreathCycle}
+                                className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-gradient-to-r from-[#00f0ff]/20 to-[#b794f6]/20 border border-[#00f0ff]/30 text-white hover:border-[#00f0ff] transition-all"
+                                title="Execute Breath Cycle"
+                            >
+                                🌬️ Breath Cycle
+                            </button>
+                            <div className="w-px h-4 bg-white/10 mx-2" />
+                            <button
+                                onClick={() => setAutoRefresh(!autoRefresh)}
+                                className={`flex items-center gap-2 text-xs px-3 py-1 rounded-full transition-all ${autoRefresh ? 'bg-[var(--neon-blue)] text-black font-bold animate-pulse' : 'bg-white/10 text-[var(--text-muted)] hover:text-white'}`}
+                                title={autoRefresh ? "Auto-Refresh Active (5s)" : "Enable Auto-Refresh"}
+                            >
+                                <RefreshCcw className={`h-3 w-3 ${autoRefresh ? 'animate-spin' : ''}`} />
+                                {autoRefresh ? 'LIVE' : 'SYNC'}
+                            </button>
+                            <div className="w-px h-4 bg-white/10 mx-2" />
+                            <button onClick={() => setTuningForkSetting('focus')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'focus' ? 'bg-white text-black' : 'bg-white/10'}`}>Focus</button>
+                            <button onClick={() => setTuningForkSetting('creative')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'creative' ? 'bg-white text-black' : 'bg-white/10'}`}>Creative</button>
+                            <button onClick={() => setTuningForkSetting('calm')} className={`text-sm px-3 py-1 rounded-full ${tuningForkSetting === 'calm' ? 'bg-white text-black' : 'bg-white/10'}`}>Calm</button>
+                        </div>
+                    </header>
 
-                {currentView === 'nexus' && <NexusView onSaveArtifact={handleSaveClick} onLoadData={loadData} />}
-                {currentView === 'vessels' && <VesselsView vessels={vessels} vcpSignals={vcpSignals} onLoadData={loadData} />}
-                {currentView === 'vault' && <VaultView artifacts={artifacts} onLoadData={loadData} />}
-                {currentView === 'mirror' && <MirrorView metrics={metrics} onRunGenesisCycle={handleRunGenesisCycle} onRunCommunionCycle={handleRunCommunionCycle} />}
-                {currentView === 'hlog' && <HLogView hlogEvents={hlogEvents} pulse={pulse} somaticState={somaticState} onLoadData={loadData} />}
-                {currentView === 'principles' && <PrinciplesView />}
-                {currentView === 'projects' && <ProjectsView projects={projects} vessels={vessels} onLoadData={loadData} onOpenVesselAssignment={handleOpenVesselAssignmentModal} />}
-                {currentView === 'simulations' && <SimulationsView simulations={simulations} simulationRuns={simulationRuns} onLoadData={loadData} />}
-                {currentView === 'codex' && <CodexView artifacts={artifacts} vessels={vessels} templates={templates} />}
-                {currentView === 'checkin' && (
-                    <div className="glass-panel p-6 max-w-2xl mx-auto">
-                        <CheckInView />
-                    </div>
-                )}
-<<<<<<< HEAD
-                {currentView === 'lattice' && <LatticeGovernor />}
-                {currentView === 'rebound' && <ReboundView />}
-=======
-                {currentView === 'lattice' && <LatticeNode />}
-                {currentView === 'vision' && (
-                    <div className="max-w-4xl mx-auto space-y-6">
-                        <VisualViewport 
-                            imageUrl={visionUrl || undefined} 
-                            isGenerating={isGeneratingVision} 
-                            mood={systemMetabolism?.mood}
-                            metabolicRate={pulse / 150}
-                            pressure={pressure}
-                            tick={tick}
+                    {currentView === 'portal' && (
+                        <PortalView
+                            onNavigate={setCurrentView}
+                            systemMetrics={metrics}
+                            vesselCount={vessels.length}
+                            ideaCount={7} // Hardcoded based on nexus-ideas.ts length
                         />
-                        <div className="glass-panel p-6 space-y-4">
-                            <h3 className="text-lg font-mono text-[#00f0ff]">SYSTEM_DNA // METABOLIC_STATE</h3>
-                            <div className="grid grid-cols-2 gap-4 text-xs font-mono">
-                                <div>
-                                    <span className="text-[var(--text-muted)]">PERSONALITY:</span>
-                                    <p className="text-white">{systemMetabolism?.personality || 'AWAITING_DIGESTION'}</p>
+                    )}
+                    {currentView === 'nexus' && <NexusView onSaveArtifact={handleSaveClick} onLoadData={loadData} />}
+                    {currentView === 'vessels' && <VesselsView vessels={vessels} vcpSignals={vcpSignals} onLoadData={loadData} />}
+                    {currentView === 'vault' && <VaultView artifacts={artifacts} onLoadData={loadData} />}
+                    {currentView === 'mirror' && <MirrorView metrics={metrics} onRunGenesisCycle={handleRunGenesisCycle} onRunCommunionCycle={handleRunCommunionCycle} />}
+                    {currentView === 'hlog' && <HLogView hlogEvents={hlogEvents} pulse={pulse} somaticState={somaticState} onLoadData={loadData} />}
+                    {currentView === 'principles' && <PrinciplesView />}
+                    {currentView === 'projects' && <ProjectsView projects={projects} vessels={vessels} onLoadData={loadData} onOpenVesselAssignment={handleOpenVesselAssignmentModal} />}
+                    {currentView === 'simulations' && <SimulationsView simulations={simulations} simulationRuns={simulationRuns} onLoadData={loadData} />}
+                    {currentView === 'codex' && <CodexView artifacts={artifacts} vessels={vessels} templates={templates} />}
+                    {currentView === 'checkin' && (
+                        <div className="glass-panel p-6 max-w-2xl mx-auto">
+                            <CheckInView />
+                        </div>
+                    )}
+                    {currentView === 'lattice' && <LatticeGovernor />}
+                    {currentView === 'rebound' && <ReboundView />}
+                    {currentView === 'vision' && (
+                        <div className="max-w-4xl mx-auto space-y-6">
+                            <VisualViewport
+                                imageUrl={visionUrl || undefined}
+                                isGenerating={isGeneratingVision}
+                                mood={systemMetabolism?.mood}
+                                metabolicRate={pulse / 150}
+                                pressure={pressure}
+                                tick={tick}
+                            />
+                            <div className="glass-panel p-6 space-y-4">
+                                <h3 className="text-lg font-mono text-[#00f0ff]">SYSTEM_DNA // METABOLIC_STATE</h3>
+                                <div className="grid grid-cols-2 gap-4 text-xs font-mono">
+                                    <div>
+                                        <span className="text-[var(--text-muted)]">PERSONALITY:</span>
+                                        <p className="text-white">{systemMetabolism?.personality || 'AWAITING_DIGESTION'}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-[var(--text-muted)]">MOOD:</span>
+                                        <p className="text-white">{systemMetabolism?.mood || 'NOMINAL'}</p>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <span className="text-[var(--text-muted)]">DIRECTIVE:</span>
+                                        <p className="text-white">{systemMetabolism?.directive || 'STABILIZE_CORE'}</p>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <span className="text-[var(--text-muted)]">ATOMIC_TRUTHS (PEPTIDES):</span>
+                                        <ul className="list-disc list-inside text-[#00ff99] space-y-1 mt-1">
+                                            {systemMetabolism?.peptides.map((p, i) => (
+                                                <li key={i}>{p}</li>
+                                            )) || <li>AWAITING_EXTRACTION...</li>}
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span className="text-[var(--text-muted)]">MOOD:</span>
-                                    <p className="text-white">{systemMetabolism?.mood || 'NOMINAL'}</p>
+                            </div>
+                        </div>
+                    )}
+                    {currentView === 'evolution' && <EvolutionTerminal />}
+                </main >
+
+                {/* Diagnostics Overlay */}
+                {
+                    showDiagnostics && (
+                        <SystemDiagnostics
+                            lastError={lastError}
+                            onClose={() => setShowDiagnostics(false)}
+                        />
+                    )
+                }
+
+                {/* Shared Modals */}
+                {
+                    showVesselAssignmentModal && directiveToAssign && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="glass-panel w-full max-w-lg">
+                                <h3 className="text-lg font-medium mb-4">Assign Vessel</h3>
+                                <div className="space-y-2">
+                                    {vessels.map(v => (
+                                        <button
+                                            key={v.id}
+                                            onClick={() => handleAssignVessel(v.id)}
+                                            className="w-full text-left p-2 rounded-lg hover:bg-[rgba(255,255,255,0.05)]"
+                                        >
+                                            {v.emoji} {v.name}
+                                        </button>
+                                    ))}
                                 </div>
-                                <div className="col-span-2">
-                                    <span className="text-[var(--text-muted)]">DIRECTIVE:</span>
-                                    <p className="text-white">{systemMetabolism?.directive || 'STABILIZE_CORE'}</p>
-                                </div>
-                                <div className="col-span-2">
-                                    <span className="text-[var(--text-muted)]">ATOMIC_TRUTHS (PEPTIDES):</span>
-                                    <ul className="list-disc list-inside text-[#00ff99] space-y-1 mt-1">
-                                        {systemMetabolism?.peptides.map((p, i) => (
-                                            <li key={i}>{p}</li>
-                                        )) || <li>AWAITING_EXTRACTION...</li>}
-                                    </ul>
+                                <div className="flex justify-end gap-4 mt-6">
+                                    <button onClick={() => setShowVesselAssignmentModal(false)} className="glass-btn">Cancel</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
->>>>>>> 0e86387f762a847d4d8536909fcfa36be27897c5
-            </main>
+                    )
+                }
 
-            {/* Diagnostics Overlay */}
-            {showDiagnostics && (
-                <SystemDiagnostics
-                    lastError={lastError}
-                    onClose={() => setShowDiagnostics(false)}
-                />
-            )}
-
-            {/* Shared Modals */}
-            {showVesselAssignmentModal && directiveToAssign && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="glass-panel w-full max-w-lg">
-                        <h3 className="text-lg font-medium mb-4">Assign Vessel</h3>
-                        <div className="space-y-2">
-                            {vessels.map(v => (
-                                <button
-                                    key={v.id}
-                                    onClick={() => handleAssignVessel(v.id)}
-                                    className="w-full text-left p-2 rounded-lg hover:bg-[rgba(255,255,255,0.05)]"
-                                >
-                                    {v.emoji} {v.name}
-                                </button>
-                            ))}
-                        </div>
-                        <div className="flex justify-end gap-4 mt-6">
-                            <button onClick={() => setShowVesselAssignmentModal(false)} className="glass-btn">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {showSaveModal && artifactToSave && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="glass-panel w-full max-w-lg">
-                        <h3 className="text-lg font-medium mb-4">Save Artifact</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-sm text-[var(--text-muted)]">Title</label>
-                                <input
-                                    type="text"
-                                    value={artifactToSave.title}
-                                    onChange={e => setArtifactToSave({ ...artifactToSave, title: e.target.value })}
-                                    className="glass-input w-full"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-sm text-[var(--text-muted)]">Content</label>
-                                <textarea
-                                    value={artifactToSave.content}
-                                    onChange={e => setArtifactToSave({ ...artifactToSave, content: e.target.value })}
-                                    className="glass-input w-full h-32"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-sm text-[var(--text-muted)]">Category</label>
-                                <select
-                                    value={artifactToSave.category}
-                                    onChange={e => setArtifactToSave({ ...artifactToSave, category: e.target.value as Artifact['category'] })}
-                                    className="glass-input w-full"
-                                >
-                                    <option value="theory">Theory</option>
-                                    <option value="protocol">Protocol</option>
-                                    <option value="data">Data</option>
-                                    <option value="reference">Reference</option>
-                                    <option value="insight">Insight</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-sm text-[var(--text-muted)]">Tags (comma-separated)</label>
-                                <input
-                                    type="text"
-                                    value={artifactToSave.tags?.join(', ')}
-                                    onChange={e => setArtifactToSave({ ...artifactToSave, tags: e.target.value.split(',').map(t => t.trim()) })}
-                                    className="glass-input w-full"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-sm text-[var(--text-muted)]">Source Link (Google Drive)</label>
-                                <input
-                                    type="text"
-                                    placeholder="https://docs.google.com/..."
-                                    value={artifactToSave.sourceLink || ''}
-                                    onChange={e => setArtifactToSave({ ...artifactToSave, sourceLink: e.target.value })}
-                                    className="glass-input w-full"
-                                />
+                {
+                    showSaveModal && artifactToSave && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="glass-panel w-full max-w-lg">
+                                <h3 className="text-lg font-medium mb-4">Save Artifact</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-sm text-[var(--text-muted)]">Title</label>
+                                        <input
+                                            type="text"
+                                            value={artifactToSave.title}
+                                            onChange={e => setArtifactToSave({ ...artifactToSave, title: e.target.value })}
+                                            className="glass-input w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm text-[var(--text-muted)]">Content</label>
+                                        <textarea
+                                            value={artifactToSave.content}
+                                            onChange={e => setArtifactToSave({ ...artifactToSave, content: e.target.value })}
+                                            className="glass-input w-full h-32"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm text-[var(--text-muted)]">Category</label>
+                                        <select
+                                            value={artifactToSave.category}
+                                            onChange={e => setArtifactToSave({ ...artifactToSave, category: e.target.value as Artifact['category'] })}
+                                            className="glass-input w-full"
+                                        >
+                                            <option value="theory">Theory</option>
+                                            <option value="protocol">Protocol</option>
+                                            <option value="data">Data</option>
+                                            <option value="reference">Reference</option>
+                                            <option value="insight">Insight</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm text-[var(--text-muted)]">Tags (comma-separated)</label>
+                                        <input
+                                            type="text"
+                                            value={artifactToSave.tags?.join(', ')}
+                                            onChange={e => setArtifactToSave({ ...artifactToSave, tags: e.target.value.split(',').map(t => t.trim()) })}
+                                            className="glass-input w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm text-[var(--text-muted)]">Source Link (Google Drive)</label>
+                                        <input
+                                            type="text"
+                                            placeholder="https://docs.google.com/..."
+                                            value={artifactToSave.sourceLink || ''}
+                                            onChange={e => setArtifactToSave({ ...artifactToSave, sourceLink: e.target.value })}
+                                            className="glass-input w-full"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex justify-end gap-4 mt-6">
+                                    <button onClick={() => setShowSaveModal(false)} className="glass-btn">Cancel</button>
+                                    <button onClick={handleSaveArtifact} className="glass-btn-primary">Save</button>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex justify-end gap-4 mt-6">
-                            <button onClick={() => setShowSaveModal(false)} className="glass-btn">Cancel</button>
-                            <button onClick={handleSaveArtifact} className="glass-btn-primary">Save</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                    )
+                }
 
-                        {glitch && <div className="glitch-overlay"></div>}
+                {glitch && <div className="glitch-overlay"></div>}
 
-                    </div>
+            </div >
 
-                    </GatewayController>
+        </GatewayController >
 
-                );
+    );
 
-            }
+}
 
-            
