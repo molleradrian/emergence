@@ -8,6 +8,8 @@
 import { useState, useEffect } from 'react';
 import { VesselStore, ArtifactStore, HLogStore, MirrorStore, ProjectStore, type Vessel, type Artifact, type HLogEvent, type Project } from '@/lib/nexus-store';
 import { generateVesselResponse } from '@/ai/flows/vessel-response';
+import { WalletButton } from '@/components/solana/WalletButton';
+import { ArtifactCard } from '@/components/artifacts/ArtifactCard';
 
 type ViewId = 'nexus' | 'projects' | 'vessels' | 'vault' | 'mirror' | 'hlog' | 'principles';
 
@@ -22,7 +24,7 @@ interface Message {
 
 export default function NexusPage() {
     const [currentView, setCurrentView] = useState<ViewId>('nexus');
-    
+
     // Data State
     const [vessels, setVessels] = useState<Vessel[]>([]);
     const [artifacts, setArtifacts] = useState<Artifact[]>([]);
@@ -145,8 +147,8 @@ export default function NexusPage() {
         setCurrentView('nexus');
     }
 
-    const filteredArtifacts = artifacts.filter(a => 
-        a.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const filteredArtifacts = artifacts.filter(a =>
+        a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         a.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
         a.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -176,8 +178,8 @@ export default function NexusPage() {
                             key={item.id}
                             onClick={() => setCurrentView(item.id)}
                             className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all ${currentView === item.id
-                                    ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.3)] shadow-[0_0_15px_rgba(0,240,255,0.15)]'
-                                    : 'hover:bg-[rgba(255,255,255,0.05)]'
+                                ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.3)] shadow-[0_0_15px_rgba(0,240,255,0.15)]'
+                                : 'hover:bg-[rgba(255,255,255,0.05)]'
                                 }`}
                             title={item.label}
                         >
@@ -199,7 +201,7 @@ export default function NexusPage() {
                         <h1 className="font-semibold text-xl tracking-wide neon-text-blue">AETHERIUM NEXUS</h1>
                         <span className="text-[var(--text-muted)] text-sm">v1.0 | OS/E</span>
                     </div>
-                    {/* Global Search could go here later */}
+                    <WalletButton />
                 </header>
 
                 {/* NEXUS VIEW (Chat) */}
@@ -234,8 +236,8 @@ export default function NexusPage() {
                                         </div>
                                     )}
                                     <div className={`max-w-[70%] p-3 rounded-xl ${msg.type === 'user'
-                                            ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.2)]'
-                                            : 'bg-[var(--glass-bg)] border border-[var(--glass-border)]'
+                                        ? 'bg-[rgba(0,240,255,0.1)] border border-[rgba(0,240,255,0.2)]'
+                                        : 'bg-[var(--glass-bg)] border border-[var(--glass-border)]'
                                         }`}>
                                         {msg.type === 'ai' && <div className="text-xs text-[var(--text-muted)] mb-1">{msg.vessel}</div>}
                                         <p className="text-sm leading-relaxed whitespace-pre-wrap text-[var(--text-primary)]">{msg.text}</p>
@@ -324,8 +326,8 @@ export default function NexusPage() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {vessels.map((v) => (
-                                    <div 
-                                        key={v.id} 
+                                    <div
+                                        key={v.id}
                                         onClick={() => handleVesselClick(v.id)}
                                         className="glass-panel hover:border-[var(--neon-orange)] transition-all group cursor-pointer active:scale-95"
                                     >
@@ -370,16 +372,16 @@ export default function NexusPage() {
                             <div className="glass-panel text-center py-12">
                                 <div className="text-4xl mb-4 opacity-50">💎</div>
                                 <p className="text-[var(--text-muted)]">
-                                    {artifacts.length === 0 
-                                        ? "No artifacts archived yet. Create insights through the Nexus." 
+                                    {artifacts.length === 0
+                                        ? "No artifacts archived yet. Create insights through the Nexus."
                                         : "No artifacts match your search query."}
                                 </p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {filteredArtifacts.map((a) => (
-                                    <div 
-                                        key={a.id} 
+                                    <div
+                                        key={a.id}
                                         onClick={() => setExpandedArtifactId(expandedArtifactId === a.id ? null : a.id)}
                                         className={`glass-panel hover:border-[var(--neon-purple)] transition-all cursor-pointer ${expandedArtifactId === a.id ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''}`}
                                     >
